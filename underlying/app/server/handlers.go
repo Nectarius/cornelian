@@ -6,9 +6,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/golangcollege/sessions"
-	"github.com/nefarius/cornelian/internal/app"
-	"github.com/nefarius/cornelian/internal/app/store"
-	"github.com/nefarius/cornelian/internal/app/views"
+	"github.com/nefarius/cornelian/underlying/app"
+	"github.com/nefarius/cornelian/underlying/app/store"
+	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
 func answerQuestionHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {

@@ -7,8 +7,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golangcollege/sessions"
-	"github.com/nefarius/cornelian/internal/app/store"
-	"github.com/nefarius/cornelian/internal/app/views"
+	"github.com/nefarius/cornelian/underlying/app/store"
+	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
 func StartServer(session *sessions.Session, db *store.InMem) {

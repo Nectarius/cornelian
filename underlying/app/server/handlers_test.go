@@ -9,8 +9,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/golangcollege/sessions"
-	"github.com/nefarius/cornelian/internal/app"
-	"github.com/nefarius/cornelian/internal/app/store"
+	"github.com/nefarius/cornelian/underlying/app"
+	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -10,7 +10,7 @@ import (
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/google/uuid"
-	"github.com/nefarius/cornelian/internal/app"
+	"github.com/nefarius/cornelian/underlying/app"
 )
 
 type InMem struct {

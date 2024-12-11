@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/nefarius/cornelian/internal/app/server"
-	"github.com/nefarius/cornelian/internal/app/store"
+	"github.com/nefarius/cornelian/underlying/app/server"
+	"github.com/nefarius/cornelian/underlying/app/store"
 )
 
 func main() {
