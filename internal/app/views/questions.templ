@@ -1,0 +1,12 @@
+package views
+
+import "github.com/nefarius/cornelian/internal/app"
+
+templ Questions(questions []app.Question) {
+	<div id="questions">
+		for _, q := range questions {
+			@Card(q)
+			<br/>
+		}
+	</div>
+}
