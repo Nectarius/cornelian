@@ -1,6 +1,10 @@
 package app
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Status string
 
@@ -31,4 +35,12 @@ type Talk struct {
 	ID      string
 	Title   string
 	Authors []string
+}
+
+type Quiz struct {
+	Id          primitive.ObjectID
+	Header      string
+	Description string
+	Tag         string
+	Questions   []Question
 }

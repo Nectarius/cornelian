@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nefarius/cornelian/internal/app"
+	"github.com/nefarius/cornelian/underlying/app"
 	"github.com/stretchr/testify/assert"
 )
 

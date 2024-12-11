@@ -3,12 +3,10 @@ package store
 import (
 	"fmt"
 	"log/slog"
-	"math/rand"
 	"slices"
 	"sort"
 	"time"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/google/uuid"
 	"github.com/nefarius/cornelian/underlying/app"
 )
@@ -108,54 +106,10 @@ func (i *InMem) Delete(id string) {
 	}
 }
 
-func (i *InMem) SeedWithFakeData() {
-	talk1 := app.Talk{
-		ID:      "1",
-		Title:   "Spring Boot 3.2",
-		Authors: []string{"hanna.hansson@callistaenterprise.se"},
+func (i *InMem) FillWithData(q []app.Question) {
+	for _, question := range q {
+		i.db = append(i.db, question) // note the = instead of :=
 	}
-	talk2 := app.Talk{
-		ID:      "2",
-		Title:   "Go with HTMX",
-		Authors: []string{"erik.lupander@callistaenterprise.se"},
-	}
-	talk3 := app.Talk{
-		ID:      "3",
-		Title:   "AI - Skynet is here",
-		Authors: []string{"kalle.karlsson@callistaenterprise.se"},
-	}
-	talks := []app.Talk{talk1, talk2, talk3}
-	gofakeit.Seed(time.Now().UnixMilli())
-
-	for j := 0; j < 15; j++ {
-		rnd := rand.Intn(len(talks))
-		negRand := -rand.Intn(120)
-		q := app.Question{
-			ID:        uuid.NewString(),
-			Talk:      talks[rnd],
-			From:      gofakeit.Name(),
-			Text:      gofakeit.Question(),
-			CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),
-			Status:    app.StatusOpen,
-		}
-		i.db = append(i.db, q)
-	}
-
-	//go func() {
-	//	for {
-	//		time.Sleep(time.Second * 15)
-	//		rnd := rand.Intn(len(talks))
-	//		q := app.Question{
-	//			ID:        uuid.NewString(),
-	//			Talk:      talks[rnd],
-	//			From:      gofakeit.Name(),
-	//			Text:      gofakeit.Question(),
-	//			CreatedAt: time.Now(),
-	//			Status:    app.StatusOpen,
-	//		}
-	//		i.db = append(i.db, q)
-	//	}
-	//}()
 }
 
 func (i *InMem) Get(id string) (app.Question, error) {
