@@ -7,11 +7,12 @@ import (
 	"github.com/a-h/templ"
 	"github.com/golangcollege/sessions"
 	"github.com/nefarius/cornelian/underlying/app"
+	"github.com/nefarius/cornelian/underlying/app/access"
 	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
-func answerQuestionHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func answerQuestionHandler(session *sessions.Session, db *store.InMem, accessModule * access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
@@ -21,7 +22,10 @@ func answerQuestionHandler(session *sessions.Session, db *store.InMem) func(w ht
 
 		questionID := r.FormValue("id")
 		answerText := r.FormValue("answertext")
-		err := db.SaveAnswer(questionID, answerText, email)
+
+		var questionRepository = accessModule.QuestionRepository
+
+		err := questionRepository.SaveAnswer(questionID, answerText, email)
 
 		if err != nil {
 			http.Error(w, "error saving answer", http.StatusInternalServerError)
@@ -43,7 +47,7 @@ func deleteQuestionHandler(session *sessions.Session, db *store.InMem) func(w ht
 		questionID := r.URL.Query().Get("id")
 		db.Delete(questionID)
 		if session.GetString(r, "view") == "mine" {
-			templ.Handler(views.Questions(db.AllForAuthor(email))).ServeHTTP(w, r)
+			templ.Handler(views.Questions(db.AllForAssignedTo(email))).ServeHTTP(w, r)
 		} else {
 			templ.Handler(views.Questions(db.All())).ServeHTTP(w, r)
 		}
@@ -75,7 +79,7 @@ func myQuestionsHandler(session *sessions.Session, db *store.InMem) func(w http.
 			http.Error(w, "not logged in", 401)
 			return
 		}
-		questions := db.AllForAuthor(email)
+		questions := db.AllForAssignedTo(email)
 		session.Put(r, "view", "mine")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
 	}

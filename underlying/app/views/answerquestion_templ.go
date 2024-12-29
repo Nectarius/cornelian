@@ -44,7 +44,7 @@ func AnswerQuestion(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"jumbotron\"><h2 class=\"text-success  text-center\"><span class=\"fa fa-user\"></span> Besvara fråga</h2><h5 class=\"card-title\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"jumbotron\"><h2 class=\"text-success  text-center\"><span class=\"fa fa-user\"></span>Ответить на вопрос</h2><h5 class=\"card-title\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -57,7 +57,7 @@ func AnswerQuestion(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h5><div class=\"container\"><div class=\"row\"><div class=\"col-1\">Från</div><div class=\"col-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h5><div class=\"container\"><div class=\"row\"><div class=\"col-1\">От</div><div class=\"col-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ func AnswerQuestion(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-1\">Inkom</div><div class=\"col-11\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-1\">Когда создан</div><div class=\"col-11\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,7 +96,7 @@ func AnswerQuestion(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</pre></div></div></div><form><div class=\"form-group\"><label for=\"answerTextarea1\">Ditt svar</label> <textarea class=\"form-control\" id=\"answerTextarea1\" rows=\"5\" name=\"answertext\"></textarea></div><button type=\"submit\" class=\"btn btn-primary\" hx-post=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</pre></div></div></div><form><div class=\"form-group\"><label for=\"answerTextarea1\">Ваш ответ</label> <textarea class=\"form-control\" id=\"answerTextarea1\" rows=\"5\" name=\"answertext\"></textarea></div><button type=\"submit\" class=\"btn btn-primary\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -109,7 +109,7 @@ func AnswerQuestion(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"body\">Svara</button> <button type=\"submit\" class=\"btn btn-danger\" hx-get=\"/\" hx-target=\"body\" hx-confirm=\"Är du säker på att du vill avbryta?\">Avbryt</button></form></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"body\">Отвечать</button> <button type=\"submit\" class=\"btn btn-danger\" hx-get=\"/\" hx-target=\"body\" hx-confirm=\"Вы уверены, что хотите отменить?\">Отмена</button></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

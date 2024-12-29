@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/brianvoe/gofakeit"
 	"github.com/google/uuid"
 	"github.com/nefarius/cornelian/underlying/app"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,33 +13,46 @@ func GetDefaultQuizData() app.Quiz {
 
 	var listOfQuestions = make([]app.Question, 0)
 	talk1 := app.Talk{
-		ID:      "1",
-		Title:   "Templ",
-		Authors: []string{"aeneole@gmail.com"},
+		ID:         "1",
+		Title:      "РФПЛ",
+		AssignedTo: []string{"aeneole@gmail.com"},
 	}
 
-	talks := []app.Talk{talk1}
-	gofakeit.Seed(time.Now().UnixMilli())
-
-	for j := 0; j < 15; j++ {
-		rnd := rand.Intn(len(talks))
-		negRand := -rand.Intn(120)
-		q := app.Question{
-			ID:        uuid.NewString(),
-			Talk:      talks[rnd],
-			From:      gofakeit.Name(),
-			Text:      gofakeit.Question(),
-			CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),
-			Status:    app.StatusOpen,
-		}
-		listOfQuestions = append(listOfQuestions, q)
+	talk2 := app.Talk{
+		ID:         "1",
+		Title:      "РФПЛ",
+		AssignedTo: []string{"redvelvet@gmail.com"}, // change to assigned to
 	}
+
+	negRand := -rand.Intn(120)
+	q1 := app.Question{
+		ID:        uuid.NewString(),
+		Talk:      talk1,
+		From:      "nefarius",
+		Text:      "Команда становившаяся в период с 2003 - 2008 Наибольшее число раз чемпионом. <br /> ЦСКА Локомотив Рубин Зенит",
+		CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),
+		Status:    app.StatusOpen,
+	}
+
+	listOfQuestions = append(listOfQuestions, q1)
+
+	q2 := app.Question{
+		ID:        uuid.NewString(),
+		Talk:      talk2,
+		From:      "nefarius",
+		Text:      " В какой команде РПЛ начинал играть в России Мигель Данни  - Динами Зенит ЦСКА Локомотив",
+		CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),
+		Status:    app.StatusOpen,
+	}
+
+	listOfQuestions = append(listOfQuestions, q2)
+	//}
 
 	return app.Quiz{
 		Id:          primitive.NewObjectID(),
-		Header:      "Quiz",
-		Description: "Quiz",
-		Tag:         "Test",
+		Header:      "РФПЛ 2000 - 2024",
+		Description: "Футбольные вопроссы",
+		Tag:         "Test8",
 		Questions:   listOfQuestions,
 	}
 }

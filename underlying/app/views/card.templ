@@ -17,14 +17,14 @@ templ Card(question app.Question) {
 		<div class="card-header">
 			{ question.Talk.Title }
 			if question.Status == app.StatusAnswered {
-				- <span class="text-success">Besvarad</span>
+				- <span class="text-success">Отвечено</span>
 			}
 		</div>
 		<div class="card-body">
 			<div class="container">
 				<div class="row">
-					<div class="col-2">Authors</div>
-					<div class="col-10">{ cap(strings.Split(strings.Join(question.Talk.Authors, ","), "@")[0]) }</div>
+					<div class="col-2">Выбраны для</div>
+					<div class="col-10">{ cap(strings.Split(strings.Join(question.Talk.AssignedTo, ","), "@")[0]) }</div>
 				</div>
 				<div class="row">
 					<div class="col-2">From</div>
@@ -47,7 +47,7 @@ templ Card(question app.Question) {
  							hx-get={ "/answer?id=" + question.ID }
  							hx-trigger="click"
  							hx-target="body"
-						>Besvara</button>
+						>Ответить</button>
 						<button
  							type="submit"
  							name="id"
@@ -56,7 +56,7 @@ templ Card(question app.Question) {
  							hx-trigger="click"
  							hx-confirm="Är du säker på att du vill radera frågan?"
  							hx-target="#questions"
-						>Radera</button>
+						>Удалить</button>
 					</div>
 				</div>
 				@Answers(question.Answers)

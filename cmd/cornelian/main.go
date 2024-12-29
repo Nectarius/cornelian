@@ -29,5 +29,5 @@ func main() {
 		module.Clear()
 	}(cornelianModule, context.Background())
 	// Setup and start HTTP server
-	server.StartServer(session, db)
+	server.StartServer(session, db, cornelianModule)
 }

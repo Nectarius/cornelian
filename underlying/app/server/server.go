@@ -7,11 +7,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golangcollege/sessions"
+	"github.com/nefarius/cornelian/underlying/app/access"
 	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
-func StartServer(session *sessions.Session, db *store.InMem) {
+func StartServer(session *sessions.Session, db *store.InMem, accessModule *access.CornelianModule) {
 	// Set-up chi router with middleware
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -34,7 +35,7 @@ func StartServer(session *sessions.Session, db *store.InMem) {
 	r.Get("/all", allQuestionsHandler(session, db))
 	r.Get("/mine", myQuestionsHandler(session, db))
 
-	r.Post("/answerquestion", answerQuestionHandler(session, db))
+	r.Post("/answerquestion", answerQuestionHandler(session, db, accessModule))
 	r.Delete("/delete", deleteQuestionHandler(session, db))
 
 	// Start plain HTTP listener
@@ -46,7 +47,7 @@ func indexPage(session *sessions.Session, db *store.InMem) func(w http.ResponseW
 		email := session.GetString(r, "email")
 		if email != "" {
 			if session.GetString(r, "view") == "mine" {
-				templ.Handler(views.Index(email, db.AllForAuthor(email))).ServeHTTP(w, r)
+				templ.Handler(views.Index(email, db.AllForAssignedTo(email))).ServeHTTP(w, r)
 			} else {
 				templ.Handler(views.Index(email, db.All())).ServeHTTP(w, r)
 			}

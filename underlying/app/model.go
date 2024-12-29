@@ -32,9 +32,9 @@ type Answer struct {
 }
 
 type Talk struct {
-	ID      string
-	Title   string
-	Authors []string
+	ID         string
+	Title      string
+	AssignedTo []string
 }
 
 type Quiz struct {

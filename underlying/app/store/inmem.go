@@ -70,10 +70,10 @@ func (i *InMem) AllInStatus(status app.Status) []app.Question {
 	return out
 }
 
-func (i *InMem) AllForAuthor(email string) []app.Question {
+func (i *InMem) AllForAssignedTo(email string) []app.Question {
 	out := make([]app.Question, 0)
 	for _, q := range i.db {
-		if slices.Contains(q.Talk.Authors, email) {
+		if slices.Contains(q.Talk.AssignedTo, email) {
 			out = append(out, q)
 		}
 	}
@@ -86,7 +86,7 @@ func (i *InMem) AllForAuthor(email string) []app.Question {
 func (i *InMem) AllForAuthorInStatus(email string, status app.Status) []app.Question {
 	out := make([]app.Question, 0)
 	for _, q := range i.db {
-		if slices.Contains(q.Talk.Authors, email) && q.Status == status {
+		if slices.Contains(q.Talk.AssignedTo, email) && q.Status == status {
 			out = append(out, q)
 		}
 	}

@@ -33,7 +33,7 @@ func Answers(answers []app.Answer) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		if len(answers) > 0 {
 			for _, answer := range answers {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"card\" style=\"margin-top:4px;\"><div class=\"card-body bg-light\"><div class=\"container\"><div class=\"row\"><div class=\"col-2\">Answered By...</div><div class=\"col-10\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"card\" style=\"margin-top:4px;\"><div class=\"card-body bg-light\"><div class=\"container\"><div class=\"row\"><div class=\"col-2\">Автор ответа</div><div class=\"col-10\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -46,7 +46,7 @@ func Answers(answers []app.Answer) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-2\">Answered At</div><div class=\"col-10\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-2\">Время</div><div class=\"col-10\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -59,7 +59,7 @@ func Answers(answers []app.Answer) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-2\">Answer</div><div class=\"col-10\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"row\"><div class=\"col-2\">Ответ</div><div class=\"col-10\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

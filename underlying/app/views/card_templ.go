@@ -59,19 +59,19 @@ func Card(question app.Question) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if question.Status == app.StatusAnswered {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("- <span class=\"text-success\">Besvarad</span>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("- <span class=\"text-success\">Отвечено</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"card-body\"><div class=\"container\"><div class=\"row\"><div class=\"col-2\">Authors</div><div class=\"col-10\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"card-body\"><div class=\"container\"><div class=\"row\"><div class=\"col-2\">Выбраны для</div><div class=\"col-10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(cap(strings.Split(strings.Join(question.Talk.Authors, ","), "@")[0]))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(cap(strings.Split(strings.Join(question.Talk.AssignedTo, ","), "@")[0]))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 27, Col: 95}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 27, Col: 98}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -129,7 +129,7 @@ func Card(question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-target=\"body\">Besvara</button> <button type=\"submit\" name=\"id\" class=\"btn btn-danger\" hx-delete=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-target=\"body\">Ответить</button> <button type=\"submit\" name=\"id\" class=\"btn btn-danger\" hx-delete=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +142,7 @@ func Card(question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-confirm=\"Är du säker på att du vill radera frågan?\" hx-target=\"#questions\">Radera</button></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-confirm=\"Är du säker på att du vill radera frågan?\" hx-target=\"#questions\">Удалить</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
