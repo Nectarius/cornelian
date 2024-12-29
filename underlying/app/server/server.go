@@ -29,8 +29,8 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/logout", logoutHandler(session))
 
 	// API handlers
-	r.Get("/countall", countAllHandler(db))
-	r.Get("/countmine", countOwnHandler(session, db))
+	r.Get("/countall", countAllHandler(accessModule))
+	r.Get("/countmine", countOwnHandler(session, accessModule))
 
 	r.Get("/all", allQuestionsHandler(session, accessModule))
 	r.Get("/mine", myQuestionsHandler(session, accessModule))

@@ -8,7 +8,6 @@ import (
 	"github.com/golangcollege/sessions"
 	"github.com/nefarius/cornelian/underlying/app"
 	"github.com/nefarius/cornelian/underlying/app/access"
-	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
@@ -82,17 +81,19 @@ func allQuestionsHandler(session *sessions.Session, accessModule *access.Corneli
 	}
 }
 
-func countOwnHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func countOwnHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var repository = accessModule.QuestionRepository
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
-		all := len(db.AllForAuthorInStatus(email, app.StatusOpen))
+		all := len(repository.AllForAuthorInStatus(email, app.StatusOpen))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }
 
-func countAllHandler(db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func countAllHandler(accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var repository = accessModule.QuestionRepository
 	return func(w http.ResponseWriter, r *http.Request) {
-		all := len(db.AllInStatus(app.StatusOpen))
+		all := len(repository.AllInStatus(app.StatusOpen))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }

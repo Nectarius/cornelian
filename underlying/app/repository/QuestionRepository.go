@@ -40,6 +40,20 @@ func (r *QuestionRepository) GetQuiz() app.Quiz {
 	return panelView
 }
 
+func (r *QuestionRepository) AllForAuthorInStatus(email string, status app.Status) []app.Question {
+	var quiz = r.GetQuiz()
+	out := make([]app.Question, 0)
+	for _, q := range quiz.Questions {
+		if slices.Contains(q.Talk.AssignedTo, email) && q.Status == status {
+			out = append(out, q)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].CreatedAt.After(out[j].CreatedAt)
+	})
+	return out
+}
+
 func (r *QuestionRepository) GetQuestion(id string) (app.Question, error) {
 	var quiz = r.GetQuiz()
 	for _, q := range quiz.Questions {
@@ -55,6 +69,21 @@ func (r *QuestionRepository) AllQuestions() []app.Question {
 	sort.Slice(out, func(i, j int) bool {
 		return out[i].CreatedAt.After(out[j].CreatedAt)
 		//return out[i].CreatedAt.After(out[j].CreatedAt) && out[i].Status == app.StatusOpen
+	})
+	return out
+}
+
+func (r *QuestionRepository) AllInStatus(status app.Status) []app.Question {
+	var quiz = r.GetQuiz()
+	out := make([]app.Question, 0)
+	for _, q := range quiz.Questions {
+		if q.Status == status {
+			out = append(out, q)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool {
+		//return (out[j].Status == app.StatusOpen && out[i].Status != app.StatusOpen) && out[i].CreatedAt.After(out[j].CreatedAt)
+		return out[i].CreatedAt.After(out[j].CreatedAt)
 	})
 	return out
 }
