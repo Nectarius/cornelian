@@ -27,11 +27,11 @@ templ Card(question app.Question) {
 					<div class="col-10">{ cap(strings.Split(strings.Join(question.Talk.AssignedTo, ","), "@")[0]) }</div>
 				</div>
 				<div class="row">
-					<div class="col-2">From</div>
+					<div class="col-2">От</div>
 					<div class="col-10">{ question.From }</div>
 				</div>
 				<div class="row">
-					<div class="col-2">Created At</div>
+					<div class="col-2">Время создания</div>
 					<div class="col-10">{ question.CreatedAt.Format( "2006-01-02 15:04:05") }</div>
 				</div>
 				<div class="row">
@@ -48,15 +48,6 @@ templ Card(question app.Question) {
  							hx-trigger="click"
  							hx-target="body"
 						>Ответить</button>
-						<button
- 							type="submit"
- 							name="id"
- 							class="btn btn-danger"
- 							hx-delete={ "/delete?id=" + question.ID }
- 							hx-trigger="click"
- 							hx-confirm="Är du säker på att du vill radera frågan?"
- 							hx-target="#questions"
-						>Удалить</button>
 					</div>
 				</div>
 				@Answers(question.Answers)

@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"fmt"
 	"log"
-
+	"slices"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,6 +38,39 @@ func (r *QuestionRepository) GetQuiz() app.Quiz {
 	}
 
 	return panelView
+}
+
+func (r *QuestionRepository) GetQuestion(id string) (app.Question, error) {
+	var quiz = r.GetQuiz()
+	for _, q := range quiz.Questions {
+		if q.ID == id {
+			return q, nil
+		}
+	}
+	return app.Question{}, fmt.Errorf("question identified by %v not found", id)
+}
+
+func (r *QuestionRepository) AllQuestions() []app.Question {
+	out := r.GetQuiz().Questions
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].CreatedAt.After(out[j].CreatedAt)
+		//return out[i].CreatedAt.After(out[j].CreatedAt) && out[i].Status == app.StatusOpen
+	})
+	return out
+}
+
+func (r *QuestionRepository) AllForAssignedTo(email string) []app.Question {
+	var quiz = r.GetQuiz()
+	out := make([]app.Question, 0)
+	for _, q := range quiz.Questions {
+		if slices.Contains(q.Talk.AssignedTo, email) {
+			out = append(out, q)
+		}
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].CreatedAt.After(out[j].CreatedAt)
+	})
+	return out
 }
 
 func (r *QuestionRepository) InsertQuiz(panelView app.Quiz) primitive.ObjectID {
@@ -82,11 +117,5 @@ func (r *QuestionRepository) SaveAnswer(id string, text string, answeredBy strin
 		}
 	}
 
-	// Define the update to add the new field
-	//
-
-	//update := bson.M{"$set": bson.M{"questions": panelView.Questions}}
-
 	return nil
-
 }

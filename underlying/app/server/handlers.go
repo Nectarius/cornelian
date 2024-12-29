@@ -12,7 +12,7 @@ import (
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
-func answerQuestionHandler(session *sessions.Session, db *store.InMem, accessModule * access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+func answerQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
@@ -32,30 +32,12 @@ func answerQuestionHandler(session *sessions.Session, db *store.InMem, accessMod
 			return
 		}
 
-		indexPage(session, db)(w, r)
+		indexPage(session, accessModule)(w, r)
 	}
 }
 
-func deleteQuestionHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
-			return
-		}
-
-		questionID := r.URL.Query().Get("id")
-		db.Delete(questionID)
-		if session.GetString(r, "view") == "mine" {
-			templ.Handler(views.Questions(db.AllForAssignedTo(email))).ServeHTTP(w, r)
-		} else {
-			templ.Handler(views.Questions(db.All())).ServeHTTP(w, r)
-		}
-
-	}
-}
-
-func answerQuestionPage(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func answerQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var questionRepository = accessModule.QuestionRepository
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
@@ -63,7 +45,7 @@ func answerQuestionPage(session *sessions.Session, db *store.InMem) func(w http.
 			return
 		}
 		questionID := r.FormValue("id")
-		question, err := db.Get(questionID)
+		question, err := questionRepository.GetQuestion(questionID)
 		if err != nil {
 			http.Error(w, "question not found", 404)
 			return
@@ -72,27 +54,29 @@ func answerQuestionPage(session *sessions.Session, db *store.InMem) func(w http.
 	}
 }
 
-func myQuestionsHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func myQuestionsHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
 			http.Error(w, "not logged in", 401)
 			return
 		}
-		questions := db.AllForAssignedTo(email)
+		var repository = accessModule.QuestionRepository
+		questions := repository.AllForAssignedTo(email)
 		session.Put(r, "view", "mine")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
 	}
 }
 
-func allQuestionsHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func allQuestionsHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
 			http.Error(w, "not logged in", 401)
 			return
 		}
-		questions := db.All()
+		var repository = accessModule.QuestionRepository
+		questions := repository.AllQuestions()
 		session.Put(r, "view", "all")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
 	}
@@ -112,3 +96,22 @@ func countAllHandler(db *store.InMem) func(w http.ResponseWriter, r *http.Reques
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }
+
+// func deleteQuestionHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		email := session.GetString(r, "email")
+// 		if email == "" {
+// 			http.Error(w, "not logged in", 401)
+// 			return
+// 		}
+
+// 		questionID := r.URL.Query().Get("id")
+// 		db.Delete(questionID)
+// 		if session.GetString(r, "view") == "mine" {
+// 			templ.Handler(views.Questions(db.AllForAssignedTo(email))).ServeHTTP(w, r)
+// 		} else {
+// 			templ.Handler(views.Questions(db.All())).ServeHTTP(w, r)
+// 		}
+
+// 	}
+// }

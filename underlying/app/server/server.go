@@ -19,9 +19,9 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Use(session.Enable)
 
 	// Page specific handlers
-	r.Get("/", indexPage(session, db))
+	r.Get("/", indexPage(session, accessModule))
 	r.Get("/login", templ.Handler(views.Login()).ServeHTTP)
-	r.Get("/answer", answerQuestionPage(session, db))
+	r.Get("/answer", answerQuestionPage(session, accessModule))
 
 	// Social login handlers
 	r.Get("/auth", authStartHandler())
@@ -32,24 +32,25 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/countall", countAllHandler(db))
 	r.Get("/countmine", countOwnHandler(session, db))
 
-	r.Get("/all", allQuestionsHandler(session, db))
-	r.Get("/mine", myQuestionsHandler(session, db))
+	r.Get("/all", allQuestionsHandler(session, accessModule))
+	r.Get("/mine", myQuestionsHandler(session, accessModule))
 
-	r.Post("/answerquestion", answerQuestionHandler(session, db, accessModule))
-	r.Delete("/delete", deleteQuestionHandler(session, db))
+	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
+	// r.Delete("/delete", deleteQuestionHandler(session, db))
 
 	// Start plain HTTP listener
 	_ = http.ListenAndServe(":3000", r)
 }
 
-func indexPage(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
+func indexPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var questionRepository = accessModule.QuestionRepository
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email != "" {
 			if session.GetString(r, "view") == "mine" {
-				templ.Handler(views.Index(email, db.AllForAssignedTo(email))).ServeHTTP(w, r)
+				templ.Handler(views.Index(email, questionRepository.AllForAssignedTo(email))).ServeHTTP(w, r)
 			} else {
-				templ.Handler(views.Index(email, db.All())).ServeHTTP(w, r)
+				templ.Handler(views.Index(email, questionRepository.AllQuestions())).ServeHTTP(w, r)
 			}
 			return
 		}
