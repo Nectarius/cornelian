@@ -43,14 +43,14 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 }
 
 func indexPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionRepository = accessModule.QuestionRepository
+	var questionService = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email != "" {
 			if session.GetString(r, "view") == "mine" {
-				templ.Handler(views.Index(email, questionRepository.AllForAssignedTo(email))).ServeHTTP(w, r)
+				templ.Handler(views.Index(email, questionService.AllForAssignedTo(email))).ServeHTTP(w, r)
 			} else {
-				templ.Handler(views.Index(email, questionRepository.AllQuestions())).ServeHTTP(w, r)
+				templ.Handler(views.Index(email, questionService.AllQuestions())).ServeHTTP(w, r)
 			}
 			return
 		}

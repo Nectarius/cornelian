@@ -36,7 +36,7 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 }
 
 func answerQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionRepository = accessModule.QuestionRepository
+	var questionRepository = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email == "" {
@@ -60,7 +60,7 @@ func myQuestionsHandler(session *sessions.Session, accessModule *access.Cornelia
 			http.Error(w, "not logged in", 401)
 			return
 		}
-		var repository = accessModule.QuestionRepository
+		var repository = accessModule.QuestionService
 		questions := repository.AllForAssignedTo(email)
 		session.Put(r, "view", "mine")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
@@ -74,7 +74,7 @@ func allQuestionsHandler(session *sessions.Session, accessModule *access.Corneli
 			http.Error(w, "not logged in", 401)
 			return
 		}
-		var repository = accessModule.QuestionRepository
+		var repository = accessModule.QuestionService
 		questions := repository.AllQuestions()
 		session.Put(r, "view", "all")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
@@ -82,7 +82,7 @@ func allQuestionsHandler(session *sessions.Session, accessModule *access.Corneli
 }
 
 func countOwnHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var repository = accessModule.QuestionRepository
+	var repository = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		all := len(repository.AllForAuthorInStatus(email, app.StatusOpen))
@@ -91,7 +91,7 @@ func countOwnHandler(session *sessions.Session, accessModule *access.CornelianMo
 }
 
 func countAllHandler(accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var repository = accessModule.QuestionRepository
+	var repository = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
 		all := len(repository.AllInStatus(app.StatusOpen))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
