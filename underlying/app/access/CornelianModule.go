@@ -17,7 +17,7 @@ func NewCornelianModule() *CornelianModule {
 	var mongoConf = conf.NewMongoConf()
 	var cacheConf = conf.NewCacheConf()
 	var repository = &repository.QuestionRepository{Conf: *mongoConf}
-	var questionService = service.NewQuestionService(repository)
+	var questionService = service.NewQuestionService(cacheConf, repository)
 	// var defaultData = store.GetDefaultQuizData()
 	// panelViewRepository.InsertQuiz(defaultData)
 	return &CornelianModule{QuestionRepository: repository, QuestionService: questionService, MongoConf: mongoConf, CacheConf: cacheConf}

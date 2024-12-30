@@ -6,21 +6,42 @@ import (
 	"sort"
 
 	"github.com/nefarius/cornelian/underlying/app"
+	"github.com/nefarius/cornelian/underlying/app/conf"
 	"github.com/nefarius/cornelian/underlying/app/repository"
 )
 
 type QuestionService struct {
+	CacheConf          conf.CacheConf
 	QuestionRepository repository.QuestionRepository
 }
 
-func NewQuestionService(questionRepository *repository.QuestionRepository) *QuestionService {
-	return &QuestionService{QuestionRepository: *questionRepository}
+func NewQuestionService(cache *conf.CacheConf, questionRepository *repository.QuestionRepository) *QuestionService {
+	return &QuestionService{CacheConf: *cache, QuestionRepository: *questionRepository}
 }
 
 func (r *QuestionService) GetQuiz() app.Quiz {
 	var questionRepository = r.QuestionRepository
 
+	var key = conf.CURRENT_TAG
+	var cachedData, found = r.CacheConf.Cache.Get(key)
+
+	if found {
+		fmt.Println("cached data present")
+		return cachedData.(app.Quiz)
+	}
+
+	var quiz = questionRepository.GetQuiz()
+	fmt.Println("cached data set")
+	r.CacheConf.Cache.Set(key, quiz, 0)
+
 	return questionRepository.GetQuiz()
+}
+
+func (r *QuestionService) SaveAnswer(id string, text string, answeredBy string) error {
+	var questionRepository = r.QuestionRepository
+	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
+
+	return questionRepository.SaveAnswer(id, text, answeredBy)
 }
 
 func (r *QuestionService) AllForAuthorInStatus(email string, status app.Status) []app.Question {

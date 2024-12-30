@@ -6,13 +6,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nefarius/cornelian/underlying/app"
+
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/net/context"
 )
-
-var CURRENT_TAG = "Test8"
 
 type QuestionRepository struct {
 	Conf conf.MongoConf
@@ -25,7 +24,7 @@ func NewPanelViewRepository(Conf conf.MongoConf) *QuestionRepository {
 func (r *QuestionRepository) GetQuiz() app.Quiz {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
-	var filter = bson.M{"tag": CURRENT_TAG}
+	var filter = bson.M{"tag": conf.CURRENT_TAG}
 	result := collection.FindOne(context.Background(), filter)
 
 	var panelView = app.Quiz{}
@@ -51,7 +50,7 @@ func (r *QuestionRepository) InsertQuiz(panelView app.Quiz) primitive.ObjectID {
 func (r *QuestionRepository) SaveAnswer(id string, text string, answeredBy string) error {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
-	var filter = bson.M{"tag": CURRENT_TAG}
+	var filter = bson.M{"tag": conf.CURRENT_TAG}
 	result := collection.FindOne(context.Background(), filter)
 
 	var panelView = app.Quiz{}

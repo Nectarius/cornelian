@@ -14,7 +14,7 @@ func NewCacheConf() *CacheConf {
 
 	cache, err := ristretto.NewCache(&ristretto.Config{
 		NumCounters: 1e7,
-		MaxCost:     1000000,
+		MaxCost:     100000000,
 		BufferItems: 1e7,
 	})
 	if err != nil {

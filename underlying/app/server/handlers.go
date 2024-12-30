@@ -22,9 +22,9 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 		questionID := r.FormValue("id")
 		answerText := r.FormValue("answertext")
 
-		var questionRepository = accessModule.QuestionRepository
+		var questionService = accessModule.QuestionService
 
-		err := questionRepository.SaveAnswer(questionID, answerText, email)
+		err := questionService.SaveAnswer(questionID, answerText, email)
 
 		if err != nil {
 			http.Error(w, "error saving answer", http.StatusInternalServerError)
