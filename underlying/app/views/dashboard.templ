@@ -4,7 +4,7 @@ import "github.com/nefarius/cornelian/underlying/app"
 
 templ Dashboard(email string, questions []app.Question) {
 	<div class="container">
-		<strong>Inloggad som</strong>: { email } <a href="/logout" hx-get="/logout" hx-target="html">Logga ut</a>
+		<strong>Logged in as</strong>: { email } <a href="/logout" hx-get="/logout" hx-target="html">Log out</a>
 		<div class="jumbotron">
 			<h2 class="text-success  text-center"><span class="fa fa-user"></span> Вопросы </h2>
 			<button
@@ -23,7 +23,9 @@ templ Dashboard(email string, questions []app.Question) {
 			>
 				Мои вопросы <span hx-get="/countmine" hx-trigger="every 5s" hx-target="this"><span hx-get="/countmine" hx-trigger="load" hx-target="this"></span></span>
 			</button>
+
 			@Questions(questions)
+
 		</div>
 	</div>
 }

@@ -31,7 +31,7 @@ func Dashboard(email string, questions []app.Question) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><strong>Inloggad som</strong>: ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><strong>Logged in as</strong>: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func Dashboard(email string, questions []app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Logga ut</a><div class=\"jumbotron\"><h2 class=\"text-success  text-center\"><span class=\"fa fa-user\"></span> Вопросы </h2><button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Log out</a><div class=\"jumbotron\"><h2 class=\"text-success  text-center\"><span class=\"fa fa-user\"></span> Вопросы </h2><button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

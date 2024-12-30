@@ -37,6 +37,20 @@ func (r *QuestionService) GetQuiz() app.Quiz {
 	return questionRepository.GetQuiz()
 }
 
+func (r *QuestionService) UpdateQuestion(questionId string, text string, answeredBy string) error {
+	var questionRepository = r.QuestionRepository
+	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
+
+	return questionRepository.UpdateQuestion(questionId, text, answeredBy)
+}
+
+func (r *QuestionService) AddQuestion(text string, answeredBy string) error {
+	var questionRepository = r.QuestionRepository
+	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
+
+	return questionRepository.AddQuestion(text, answeredBy)
+}
+
 func (r *QuestionService) SaveAnswer(id string, text string, answeredBy string) error {
 	var questionRepository = r.QuestionRepository
 	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
@@ -59,13 +73,8 @@ func (r *QuestionService) AllForAuthorInStatus(email string, status app.Status) 
 }
 
 func (r *QuestionService) GetQuestion(id string) (app.Question, error) {
-	var quiz = r.GetQuiz()
-	for _, q := range quiz.Questions {
-		if q.ID == id {
-			return q, nil
-		}
-	}
-	return app.Question{}, fmt.Errorf("question identified by %v not found", id)
+	var questionRepository = r.QuestionRepository
+	return questionRepository.GetQuestion(id)
 }
 
 func (r *QuestionService) AllQuestions() []app.Question {

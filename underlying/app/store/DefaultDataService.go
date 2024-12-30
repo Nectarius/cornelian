@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nefarius/cornelian/underlying/app"
+	"github.com/nefarius/cornelian/underlying/app/conf"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -52,7 +53,7 @@ func GetDefaultQuizData() app.Quiz {
 		Id:          primitive.NewObjectID(),
 		Header:      "РФПЛ 2000 - 2024",
 		Description: "Футбольные вопроссы",
-		Tag:         "Test8",
+		Tag:         conf.CURRENT_TAG,
 		Questions:   listOfQuestions,
 	}
 }

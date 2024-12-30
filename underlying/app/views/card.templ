@@ -49,6 +49,14 @@ templ Card(question app.Question) {
  							hx-target="body"
 						>Ответить</button>
 					</div>
+					<div class="col-3 text-right">
+						<button
+ 							class="btn btn-success"
+ 							hx-get={ "/edit-question?id=" + question.ID }
+ 							hx-trigger="click"
+ 							hx-target="body"
+						>Редактировать</button>
+					</div>
 				</div>
 				@Answers(question.Answers)
 			</div>

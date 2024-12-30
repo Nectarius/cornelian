@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -34,6 +35,119 @@ func (r *QuestionRepository) GetQuiz() app.Quiz {
 	}
 
 	return panelView
+}
+
+func (r *QuestionRepository) GetQuestion(id string) (app.Question, error) {
+	var quiz = r.GetQuiz()
+	for _, q := range quiz.Questions {
+		if q.ID == id {
+			return q, nil
+		}
+	}
+	return app.Question{}, fmt.Errorf("question identified by %v not found", id)
+}
+
+func (r *QuestionRepository) UpdateQuestion(questionId string, text string, answeredBy string) error {
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-data")
+	var filter = bson.M{"tag": conf.CURRENT_TAG}
+	question, error := r.GetQuestion(questionId)
+
+	fmt.Println("new text" + text + " " + answeredBy)
+	removePreviousVersion := bson.M{"$pull": bson.M{"questions": bson.M{"id": questionId}}}
+
+	_, err2 := collection.UpdateOne(context.Background(), filter, removePreviousVersion)
+	if err2 != nil {
+		fmt.Println(err2)
+		log.Fatal(err2)
+	}
+	question.Text = text
+	question.From = answeredBy
+	addWithUpdates := bson.M{"$push": bson.M{"questions": question}}
+	_, err3 := collection.UpdateOne(context.Background(), filter, addWithUpdates)
+	if err3 != nil {
+		fmt.Println(err3)
+		log.Fatal(err3)
+	}
+	//result := collection.FindOne(context.Background(), filter)
+
+	//var quiz = app.Quiz{}
+	//var err = result.Decode(&quiz)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	//var question = app.Question{
+	//	ID:        uuid.NewString(),
+	//	Talk:      conf.CURRENT_TALK,
+	//	Text:      text,
+	//	From:      answeredBy,
+	//	CreatedAt: time.Now(),
+	//	Status:    app.StatusOpen,
+	//}
+	// update := bson.M{"$set": bson.M{"inner.$[elem]": bson.M{"field1": "new_value"}}}
+	//
+	//	var arrayFilter = bson.M{"elem.ID": questionId}
+	// Update the embedded document with ID "embedded_doc_id_1"
+	//arrayFilters :=
+
+	//var updateOptions = options.Update().SetArrayFilters(arrayFilters)
+	//var updateQuestion = bson.M{"$set": bson.M{"questions.$[elem].text": text}}
+	//var filter = bson.M{
+	//	{"tag": conf.CURRENT_TAG},
+	//{"questions.id": questionId},
+	//	}
+	//var filter = bson.M{"tag": conf.CURRENT_TAG, "questions.id": questionId}
+
+	//   var filters= append(
+	// make([]interface{}, 0),
+	// bson.D{{"elem", bson.D{
+	//                   {"questions._id", questionId},
+	//                 }
+	// })
+	//  	options.Update().SetArrayFilters(
+	// 	options.ArrayFilters{
+	// 	Filters:
+
+	// )
+	//addQuestion := bson.M{"$push": bson.M{"questions": question}}
+	// arrayFilters := []interface{}{bson.M{"elem._id": questionId}}
+	//_, err2 := collection.UpdateOne(context.Background(), filter, updateQuestion,
+	//            options.Update().SetArrayFilters(
+	//            Filters : []interface{}{bson.M{"elem.id": questionId}},
+	//             )
+	//)
+	//	Filters: []interface{}{bson.M{"elem.id": questionId}},
+	//	fmt.Println(err2)
+
+	return error
+}
+
+func (r *QuestionRepository) AddQuestion(text string, answeredBy string) error {
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-data")
+	var filter = bson.M{"tag": conf.CURRENT_TAG}
+	result := collection.FindOne(context.Background(), filter)
+
+	var quiz = app.Quiz{}
+	var err = result.Decode(&quiz)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var question = app.Question{
+		ID:        uuid.NewString(),
+		Talk:      conf.CURRENT_TALK,
+		Text:      text,
+		From:      answeredBy,
+		CreatedAt: time.Now(),
+		Status:    app.StatusOpen,
+	}
+
+	addQuestion := bson.M{"$push": bson.M{"questions": question}}
+	_, err2 := collection.UpdateOne(context.Background(), filter, addQuestion)
+
+	return err2
 }
 
 func (r *QuestionRepository) InsertQuiz(panelView app.Quiz) primitive.ObjectID {

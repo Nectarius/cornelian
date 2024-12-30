@@ -1,0 +1,30 @@
+package views
+
+import "github.com/nefarius/cornelian/underlying/app"
+
+templ EditQuestion(email string, question app.Question) {
+	<div class="container">
+		<strong>Email</strong>: { email }
+		<div class="jumbotron">
+			<h2 class="text-success  text-center"><span class="fa fa-user"></span>Редактирование</h2>
+			<h5 class="card-title">{ question.Talk.Title }</h5>
+			<div class="container">
+				<div class="row">
+					<div class="col-1">От</div>
+					<div class="col-11">{ email }</div>
+				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+			</div>
+			<form>
+				<div class="form-group">
+					<label for="answerTextarea1">Описание вопроса</label>
+					<textarea class="form-control" id="questionTextarea1" rows="5" name="questiontext">{question.Text}</textarea>
+				</div>
+				<button type="submit" class="btn btn-primary" hx-post={ "/update-question?id="+ question.ID} hx-target="body">Обновить</button>
+				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
+			</form>
+		</div>
+	</div>
+}

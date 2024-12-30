@@ -22,8 +22,10 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/", indexPage(session, accessModule))
 	r.Get("/login", templ.Handler(views.Login()).ServeHTTP)
 	r.Get("/answer", answerQuestionPage(session, accessModule))
+	r.Get("/add-question", addQuestionPage(session, accessModule))
+	r.Get("/edit-question", editQuestionPage(session, accessModule))
 
-	// Social login handlers
+	// Login handlers
 	r.Get("/auth", authStartHandler())
 	r.Get("/auth/{provider}/callback", authCallbackHandler(session))
 	r.Get("/logout", logoutHandler(session))
@@ -35,6 +37,8 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/all", allQuestionsHandler(session, accessModule))
 	r.Get("/mine", myQuestionsHandler(session, accessModule))
 
+	r.Post("/save-question", saveQuestionHandler(session, accessModule))
+	r.Post("/update-question", editQuestionHandler(session, accessModule))
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 	// r.Delete("/delete", deleteQuestionHandler(session, db))
 

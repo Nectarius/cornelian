@@ -9,4 +9,12 @@ templ Questions(questions []app.Question) {
 			<br/>
 		}
 	</div>
+	<button
+ 				class="btn btn-primary"
+                    hx-get={ "/add-question" }
+					hx-trigger="click"
+					hx-target="body"
+	>
+	Добавить вопрос
+	</button>
 }
