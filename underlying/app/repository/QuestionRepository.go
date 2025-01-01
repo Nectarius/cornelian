@@ -160,36 +160,27 @@ func (r *QuestionRepository) InsertQuiz(panelView app.Quiz) primitive.ObjectID {
 }
 
 func (r *QuestionRepository) SaveAnswer(id string, text string, answeredBy string) error {
-	var client = r.Conf.MongoClient
+	client := r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
-	var filter = bson.M{"tag": conf.CURRENT_TAG}
-	result := collection.FindOne(context.Background(), filter)
+	filter := bson.M{"tag": conf.CURRENT_TAG, "questions.id": id}
 
-	var panelView = app.Quiz{}
-	var err = result.Decode(&panelView)
-	if err != nil {
-		log.Fatal(err)
+	update := bson.M{
+		"$push": bson.M{
+			"questions.$.answers": app.Answer{
+				ID:         uuid.NewString(),
+				AnsweredBy: answeredBy,
+				Text:       text,
+				AnsweredAt: time.Now(),
+			},
+		},
+		"$set": bson.M{
+			"questions.$.status": app.StatusAnswered,
+		},
 	}
 
-	for _, q := range panelView.Questions {
-
-		if q.ID == id {
-			q.Answers = append(q.Answers, app.Answer{ID: uuid.NewString(), AnsweredBy: answeredBy, Text: text, AnsweredAt: time.Now()})
-			q.Status = app.StatusAnswered
-			removePreviousVersion := bson.M{"$pull": bson.M{"questions": bson.M{"id": id}}}
-
-			_, err1 := collection.UpdateOne(context.Background(), filter, removePreviousVersion)
-			if err1 != nil {
-				log.Fatal(err)
-			}
-			addWithAnswer := bson.M{"$push": bson.M{"questions": q}}
-			_, err2 := collection.UpdateOne(context.Background(), filter, addWithAnswer)
-
-			if err2 != nil {
-				log.Fatal(err)
-			}
-
-		}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		return fmt.Errorf("failed to update answer: %w", err)
 	}
 
 	return nil
