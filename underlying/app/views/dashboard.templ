@@ -23,6 +23,14 @@ templ Dashboard(email string, questions []app.Question) {
 			>
 				Мои вопросы <span hx-get="/countmine" hx-trigger="every 5s" hx-target="this"><span hx-get="/countmine" hx-trigger="load" hx-target="this"></span></span>
 			</button>
+			<button
+ 				class="btn btn-primary"
+ 				hx-get="/quizzes"
+ 				hx-trigger="click"
+				hx-target="body"
+			>
+			   Квизы
+			</button>
 
 			@Questions(questions)
 
