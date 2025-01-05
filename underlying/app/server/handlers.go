@@ -35,6 +35,33 @@ func editQuestionHandler(session *sessions.Session, accessModule *access.Corneli
 	}
 }
 
+func editQuizHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := session.GetString(r, "email")
+		if email == "" {
+			http.Error(w, "not logged in", 401)
+			return
+		}
+
+		var quizId = r.URL.Query().Get("id")
+
+		quizText := r.FormValue("quizdescription")
+
+		var questionService = accessModule.QuestionService
+
+		err := questionService.UpdateQuiz(quizId, quizText)
+
+		if err != nil {
+			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			return
+		}
+
+		quizzes := questionService.GetQuizzes()
+
+		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
+	}
+}
+
 func saveQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
@@ -80,6 +107,22 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 		}
 
 		indexPage(session, accessModule)(w, r)
+	}
+}
+
+func quizzesPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var questionService = accessModule.QuestionService
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := session.GetString(r, "email")
+		// check permissions
+		if email == "" {
+			http.Error(w, "not logged in", 401)
+			return
+		}
+		// questionID := r.FormValue("id")
+		quizzes := questionService.GetQuizzes()
+
+		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
 	}
 }
 
@@ -131,6 +174,24 @@ func editQuestionPage(session *sessions.Session, accessModule *access.CornelianM
 			return
 		}
 		templ.Handler(views.EditQuestion(questionId, question)).ServeHTTP(w, r)
+	}
+}
+
+func editQuizPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	var questionService = accessModule.QuestionService
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := session.GetString(r, "email")
+		if email == "" {
+			http.Error(w, "not logged in", 401)
+			return
+		}
+		var quizId = r.URL.Query().Get("id")
+		var quiz, err = questionService.GetQuizById(quizId)
+		if err != nil {
+			http.Error(w, "question not found", 404)
+			return
+		}
+		templ.Handler(views.EditQuiz(email, quiz)).ServeHTTP(w, r)
 	}
 }
 

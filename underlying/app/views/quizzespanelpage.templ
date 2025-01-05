@@ -1,0 +1,52 @@
+package views
+
+import "github.com/nefarius/cornelian/underlying/app"
+
+templ QuizzesPanelPage(email string, quizzes []app.Quiz) {
+	<div class="container">
+		<strong>Email</strong>: { email }
+		<div id="quizzes">
+			for _, q := range quizzes {
+
+			<div class="card">
+				<div class="card-header">
+					{ q.Header }
+
+				</div>
+				<div class="card-body">
+
+                     <div class="container">
+                        <div class="row">
+				         	<div class="col-2">Описание</div>
+				        	<div class="col-11">{ q.Description }</div>
+				        </div>
+
+												<div class="row">
+													<div class="col-12"><hr/></div>
+												</div>
+												<div class="row">
+													<div class="col-3 text-right">
+														<button
+ 							                             class="btn btn-success"
+ 							                             hx-get={ "/edit-quiz?id=" + q.Id.Hex() }
+ 							                             hx-trigger="click"
+ 							                             hx-target="body"
+														>Редактировать</button>
+													</div>
+												</div>
+                     </div>
+                </div>
+				<br/>
+			</div>
+			}
+		</div>
+		<button
+ 				class="btn btn-primary"
+                    hx-get={ "/add-quiz" }
+						hx-trigger="click"
+						hx-target="body"
+		>
+		Добавить квиз
+		</button>
+	</div>
+}

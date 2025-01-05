@@ -8,15 +8,17 @@ import (
 	"github.com/nefarius/cornelian/underlying/app"
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"github.com/nefarius/cornelian/underlying/app/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type QuestionService struct {
 	CacheConf          conf.CacheConf
 	QuestionRepository repository.QuestionRepository
+	QuizRepository     repository.QuizRepository
 }
 
-func NewQuestionService(cache *conf.CacheConf, questionRepository *repository.QuestionRepository) *QuestionService {
-	return &QuestionService{CacheConf: *cache, QuestionRepository: *questionRepository}
+func NewQuestionService(cache *conf.CacheConf, questionRepository *repository.QuestionRepository, quizRepository *repository.QuizRepository) *QuestionService {
+	return &QuestionService{CacheConf: *cache, QuestionRepository: *questionRepository, QuizRepository: *quizRepository}
 }
 
 func (r *QuestionService) GetQuiz() app.Quiz {
@@ -26,12 +28,12 @@ func (r *QuestionService) GetQuiz() app.Quiz {
 	var cachedData, found = r.CacheConf.Cache.Get(key)
 
 	if found {
-		fmt.Println("cached data present")
+		//		fmt.Println("cached data present")
 		return cachedData.(app.Quiz)
 	}
 
 	var quiz = questionRepository.GetQuiz()
-	fmt.Println("cached data set")
+	//	fmt.Println("cached data set")
 	r.CacheConf.Cache.Set(key, quiz, 0)
 
 	return questionRepository.GetQuiz()
@@ -75,6 +77,27 @@ func (r *QuestionService) AllForAuthorInStatus(email string, status app.Status) 
 func (r *QuestionService) GetQuestion(id string) (app.Question, error) {
 	var questionRepository = r.QuestionRepository
 	return questionRepository.GetQuestion(id)
+}
+
+func (r *QuestionService) GetQuizzes() []app.Quiz {
+	var quizRepository = r.QuizRepository
+	return quizRepository.GetQuizzes()
+}
+
+func (r *QuestionService) UpdateQuiz(id string, description string) error {
+	var quizRepository = r.QuizRepository
+	var identifier, err = primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("failed to update question: %w", err)
+	}
+	return quizRepository.UpdateQuiz(identifier, description)
+}
+
+func (r *QuestionService) GetQuizById(id string) (app.Quiz, error) {
+	var quizRepository = r.QuizRepository
+	var identifier, err = primitive.ObjectIDFromHex(id)
+
+	return quizRepository.GetQuizById(identifier), err
 }
 
 func (r *QuestionService) AllQuestions() []app.Question {
