@@ -182,11 +182,11 @@ func contains(s []string, str string) bool {
 
 func (r *QuestionService) AllForAssignedTo(email string) []app.Question {
 	var quiz = r.GetQuiz()
-	fmt.Println("email : " + email)
+	//fmt.Println("email : " + email)
 	var contains = contains(quiz.AssignedTo, email)
-	if contains {
-		fmt.Println("contains : " + email)
-	}
+	//if contains {
+	//	fmt.Println("contains : " + email)
+	//	}
 
 	if !contains {
 		return []app.Question{}

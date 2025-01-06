@@ -13,22 +13,10 @@ import (
 func GetDefaultQuizData() app.Quiz {
 
 	var listOfQuestions = make([]app.Question, 0)
-	talk1 := app.Talk{
-		ID:         "1",
-		Title:      "РФПЛ",
-		AssignedTo: []string{"aeneole@gmail.com"},
-	}
-
-	talk2 := app.Talk{
-		ID:         "1",
-		Title:      "РФПЛ",
-		AssignedTo: []string{"redvelvet@gmail.com"}, // change to assigned to
-	}
 
 	negRand := -rand.Intn(120)
 	q1 := app.Question{
 		ID:        uuid.NewString(),
-		Talk:      talk1,
 		From:      "nefarius",
 		Text:      "Команда становившаяся в период с 2003 - 2008 Наибольшее число раз чемпионом. <br /> ЦСКА Локомотив Рубин Зенит",
 		CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),
@@ -39,7 +27,6 @@ func GetDefaultQuizData() app.Quiz {
 
 	q2 := app.Question{
 		ID:        uuid.NewString(),
-		Talk:      talk2,
 		From:      "nefarius",
 		Text:      " В какой команде РПЛ начинал играть в России Мигель Данни  - Динами Зенит ЦСКА Локомотив",
 		CreatedAt: time.Now().Add(time.Minute * time.Duration(negRand)),

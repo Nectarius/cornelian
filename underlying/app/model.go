@@ -21,7 +21,6 @@ type Person struct {
 
 type Question struct {
 	ID        string
-	Talk      Talk
 	From      string
 	Text      string
 	CreatedAt time.Time
@@ -34,12 +33,6 @@ type Answer struct {
 	Text       string
 	AnsweredBy string
 	AnsweredAt time.Time
-}
-
-type Talk struct {
-	ID         string
-	Title      string
-	AssignedTo []string
 }
 
 type Quiz struct {

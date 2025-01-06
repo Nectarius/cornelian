@@ -277,10 +277,11 @@ func allQuestionsHandler(session *sessions.Session, accessModule *access.Corneli
 }
 
 func countOwnHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var repository = accessModule.QuestionService
+	var questionService = accessModule.QuestionService
+	questionService.AllQuestions()
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
-		all := len(repository.AllForAuthorInStatus(email, app.StatusOpen))
+		all := len(questionService.AllForAuthorInStatus(email, app.StatusOpen))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }

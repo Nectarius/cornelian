@@ -31,30 +31,6 @@ func (i *InMem) All() []app.Question {
 	})
 	return out
 }
-func (i *InMem) AllForTalk(talkID string) []app.Question {
-	out := make([]app.Question, 0)
-	for _, q := range i.db {
-		if q.Talk.ID == talkID {
-			out = append(out, q)
-		}
-	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].CreatedAt.After(out[j].CreatedAt)
-	})
-	return out
-}
-func (i *InMem) AllForTalkInStatus(talkID string, status app.Status) []app.Question {
-	out := make([]app.Question, 0)
-	for _, q := range i.db {
-		if q.Talk.ID == talkID && q.Status == status {
-			out = append(out, q)
-		}
-	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].CreatedAt.After(out[j].CreatedAt)
-	})
-	return out
-}
 
 func (i *InMem) AllInStatus(status app.Status) []app.Question {
 	out := make([]app.Question, 0)
@@ -65,32 +41,6 @@ func (i *InMem) AllInStatus(status app.Status) []app.Question {
 	}
 	sort.Slice(out, func(i, j int) bool {
 		//return (out[j].Status == app.StatusOpen && out[i].Status != app.StatusOpen) && out[i].CreatedAt.After(out[j].CreatedAt)
-		return out[i].CreatedAt.After(out[j].CreatedAt)
-	})
-	return out
-}
-
-func (i *InMem) AllForAssignedTo(email string) []app.Question {
-	out := make([]app.Question, 0)
-	for _, q := range i.db {
-		if slices.Contains(q.Talk.AssignedTo, email) {
-			out = append(out, q)
-		}
-	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].CreatedAt.After(out[j].CreatedAt)
-	})
-	return out
-}
-
-func (i *InMem) AllForAuthorInStatus(email string, status app.Status) []app.Question {
-	out := make([]app.Question, 0)
-	for _, q := range i.db {
-		if slices.Contains(q.Talk.AssignedTo, email) && q.Status == status {
-			out = append(out, q)
-		}
-	}
-	sort.Slice(out, func(i, j int) bool {
 		return out[i].CreatedAt.After(out[j].CreatedAt)
 	})
 	return out

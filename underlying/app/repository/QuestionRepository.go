@@ -162,7 +162,6 @@ func (r *QuestionRepository) AddQuestion(text string, answeredBy string) error {
 
 	var question = app.Question{
 		ID:        uuid.NewString(),
-		Talk:      conf.CURRENT_TALK,
 		Text:      text,
 		From:      answeredBy,
 		CreatedAt: time.Now(),

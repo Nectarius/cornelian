@@ -15,17 +15,12 @@ func cap(in string) string {
 templ Card(question app.Question) {
 	<div class="card">
 		<div class="card-header">
-			{ question.Talk.Title }
 			if question.Status == app.StatusAnswered {
 				- <span class="text-success">Отвечено</span>
 			}
 		</div>
 		<div class="card-body">
 			<div class="container">
-				<div class="row">
-					<div class="col-2">Выбраны для</div>
-					<div class="col-10">{ cap(strings.Split(strings.Join(question.Talk.AssignedTo, ","), "@")[0]) }</div>
-				</div>
 				<div class="row">
 					<div class="col-2">От</div>
 					<div class="col-10">{ question.From }</div>
