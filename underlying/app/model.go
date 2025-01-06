@@ -14,6 +14,11 @@ const (
 	StatusRemoved  = Status("removed")
 )
 
+type Person struct {
+	Id    primitive.ObjectID
+	Email string
+}
+
 type Question struct {
 	ID        string
 	Talk      Talk
@@ -46,4 +51,5 @@ type Quiz struct {
 	Tag         string
 	Creator     string
 	Questions   []Question
+	AssignedTo  []string
 }

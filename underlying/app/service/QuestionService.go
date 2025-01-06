@@ -2,7 +2,6 @@ package service
 
 import (
 	"fmt"
-	"slices"
 	"sort"
 
 	"github.com/nefarius/cornelian/underlying/app"
@@ -38,9 +37,19 @@ func (r *QuestionService) InsertQuizAndMakeCurrent(quizHeader string, quizText s
 		Current:     true,
 		Tag:         conf.CURRENT_TAG,
 		Questions:   []app.Question{},
+		AssignedTo:  []string{},
 	}
 
 	return quizRepository.InsertQuizAndMakeCurrent(quiz)
+}
+
+func (r *QuestionService) AssignQuizIfApplicable(email string) error {
+	var questionRepository = r.QuestionRepository
+
+	var key = conf.CURRENT_TAG
+	r.CacheConf.Cache.Del(key)
+
+	return questionRepository.AssignToCurrentQuiz(email)
 }
 
 func (r *QuestionService) GetQuiz() app.Quiz {
@@ -83,17 +92,15 @@ func (r *QuestionService) SaveAnswer(id string, text string, answeredBy string) 
 }
 
 func (r *QuestionService) AllForAuthorInStatus(email string, status app.Status) []app.Question {
-	var quiz = r.GetQuiz()
-	out := make([]app.Question, 0)
-	for _, q := range quiz.Questions {
-		if slices.Contains(q.Talk.AssignedTo, email) && q.Status == status {
-			out = append(out, q)
+	var questions = r.AllForAssignedTo(email)
+	filtered := make([]app.Question, 0)
+	for _, q := range questions {
+		if q.Status == status {
+			filtered = append(filtered, q)
 		}
 	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].CreatedAt.After(out[j].CreatedAt)
-	})
-	return out
+
+	return filtered
 }
 
 func (r *QuestionService) GetQuestion(id string) (app.Question, error) {
@@ -164,16 +171,48 @@ func (r *QuestionService) AllInStatus(status app.Status) []app.Question {
 	return out
 }
 
-func (r *QuestionService) AllForAssignedTo(email string) []app.Question {
-	var quiz = r.GetQuiz()
-	out := make([]app.Question, 0)
-	for _, q := range quiz.Questions {
-		if slices.Contains(q.Talk.AssignedTo, email) {
-			out = append(out, q)
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
 		}
 	}
-	sort.Slice(out, func(i, j int) bool {
-		return out[i].CreatedAt.After(out[j].CreatedAt)
+	return false
+}
+
+func (r *QuestionService) AllForAssignedTo(email string) []app.Question {
+	var quiz = r.GetQuiz()
+	fmt.Println("email : " + email)
+	var contains = contains(quiz.AssignedTo, email)
+	if contains {
+		fmt.Println("contains : " + email)
+	}
+
+	if !contains {
+		return []app.Question{}
+	}
+
+	questions := quiz.Questions
+
+	for _, question := range questions {
+		if question.Answers != nil {
+			question.Answers = filterByAssignedTo(question.Answers, email)
+			break
+		}
+	}
+
+	sort.Slice(questions, func(i, j int) bool {
+		return questions[i].CreatedAt.After(questions[j].CreatedAt)
 	})
-	return out
+	return questions
+}
+
+func filterByAssignedTo(answers []app.Answer, email string) []app.Answer {
+	var filtered []app.Answer
+	for _, answer := range answers {
+		if answer.AnsweredBy == email {
+			filtered = append(filtered, answer)
+		}
+	}
+	return filtered
 }

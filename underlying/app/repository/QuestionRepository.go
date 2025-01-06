@@ -9,6 +9,7 @@ import (
 	"github.com/nefarius/cornelian/underlying/app"
 
 	"github.com/nefarius/cornelian/underlying/app/conf"
+	"github.com/nefarius/cornelian/underlying/app/store"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/net/context"
@@ -26,6 +27,16 @@ func (r *QuestionRepository) GetQuiz() app.Quiz {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
 	var filter = bson.M{"tag": conf.CURRENT_TAG}
+
+	count, err2 := collection.CountDocuments(context.Background(), filter)
+	if err2 != nil {
+		panic(err2)
+	}
+
+	if count == 0 {
+		return store.GetDefaultQuizData()
+	}
+
 	result := collection.FindOne(context.Background(), filter)
 
 	var panelView = app.Quiz{}
@@ -45,6 +56,22 @@ func (r *QuestionRepository) GetQuestion(id string) (app.Question, error) {
 		}
 	}
 	return app.Question{}, fmt.Errorf("question identified by %v not found", id)
+}
+
+func (r *QuestionRepository) AssignToCurrentQuiz(email string) error {
+	client := r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-data")
+	filter := bson.M{"tag": conf.CURRENT_TAG}
+
+	fmt.Println("push email :" + email)
+	assign := bson.M{"$push": bson.M{"assignedto": email}}
+
+	_, err := collection.UpdateOne(context.Background(), filter, assign)
+	if err != nil {
+		return fmt.Errorf("failed to update question: %w", err)
+	}
+
+	return nil
 }
 
 func (r *QuestionRepository) UpdateQuestion(questionId string, text string, answeredBy string) error {
@@ -140,6 +167,7 @@ func (r *QuestionRepository) AddQuestion(text string, answeredBy string) error {
 		From:      answeredBy,
 		CreatedAt: time.Now(),
 		Status:    app.StatusOpen,
+		Answers:   []app.Answer{},
 	}
 
 	addQuestion := bson.M{"$push": bson.M{"questions": question}}

@@ -56,12 +56,12 @@ func (r *QuizRepository) InsertQuizAndMakeCurrent(quiz app.Quiz) error {
 	quiz.Current = true
 	quiz.Tag = "TheOne"
 
-	_, err = collection.InsertOne(context.Background(), quiz)
-	if err != nil {
-		log.Fatal(err)
-		panic(err)
+	_, err2 := collection.InsertOne(context.Background(), quiz)
+	if err2 != nil {
+		log.Fatal(err2)
+		panic(err2)
 	}
-	return err
+	return err2
 }
 
 func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, header string, description string, current bool) error {

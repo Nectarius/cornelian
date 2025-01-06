@@ -7,6 +7,7 @@ import (
 )
 
 type CornelianModule struct {
+	PersonRepository   *repository.PersonRepository
 	QuestionRepository *repository.QuestionRepository
 	QuestionService    *service.QuestionService
 	MongoConf          *conf.MongoConf
@@ -17,11 +18,12 @@ func NewCornelianModule() *CornelianModule {
 	var mongoConf = conf.NewMongoConf()
 	var cacheConf = conf.NewCacheConf()
 	var questionRepository = &repository.QuestionRepository{Conf: *mongoConf}
+	var personRepository = &repository.PersonRepository{Conf: *mongoConf}
 	var quizRepository = &repository.QuizRepository{Conf: *mongoConf}
 	var questionService = service.NewQuestionService(cacheConf, questionRepository, quizRepository)
 	// var defaultData = store.GetDefaultQuizData()
 	// panelViewRepository.InsertQuiz(defaultData)
-	return &CornelianModule{QuestionRepository: questionRepository, QuestionService: questionService, MongoConf: mongoConf, CacheConf: cacheConf}
+	return &CornelianModule{PersonRepository: personRepository, QuestionRepository: questionRepository, QuestionService: questionService, MongoConf: mongoConf, CacheConf: cacheConf}
 }
 
 func (tf *CornelianModule) Clear() {

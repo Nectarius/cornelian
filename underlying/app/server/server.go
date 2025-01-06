@@ -28,7 +28,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 
 	// Login handlers
 	r.Get("/auth", authStartHandler())
-	r.Get("/auth/{provider}/callback", authCallbackHandler(session))
+	r.Get("/auth/{provider}/callback", authCallbackHandler(session, accessModule))
 	r.Get("/logout", logoutHandler(session))
 	r.Get("/quizzes-panel", quizzesPanelPage(session, accessModule))
 	r.Get("/edit-quiz", editQuizPage(session, accessModule))
