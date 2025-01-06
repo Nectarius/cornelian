@@ -194,17 +194,19 @@ func (r *QuestionService) AllForAssignedTo(email string) []app.Question {
 
 	questions := quiz.Questions
 
+	filtered := make([]app.Question, 0)
+
 	for _, question := range questions {
 		if question.Answers != nil {
 			question.Answers = filterByAssignedTo(question.Answers, email)
-			break
 		}
+		filtered = append(filtered, question)
 	}
 
-	sort.Slice(questions, func(i, j int) bool {
-		return questions[i].CreatedAt.After(questions[j].CreatedAt)
+	sort.Slice(filtered, func(i, j int) bool {
+		return filtered[i].CreatedAt.After(filtered[j].CreatedAt)
 	})
-	return questions
+	return filtered
 }
 
 func filterByAssignedTo(answers []app.Answer, email string) []app.Answer {

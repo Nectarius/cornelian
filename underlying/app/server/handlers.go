@@ -226,7 +226,7 @@ func editQuestionPage(session *sessions.Session, accessModule *access.CornelianM
 			http.Error(w, "question not found", 404)
 			return
 		}
-		templ.Handler(views.EditQuestion(questionId, question)).ServeHTTP(w, r)
+		templ.Handler(views.EditQuestion(email, question)).ServeHTTP(w, r)
 	}
 }
 
