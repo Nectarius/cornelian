@@ -62,14 +62,24 @@ func QuizzesPanelPage(email string, quizzes []app.Quiz) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"card-body\"><div class=\"container\"><div class=\"row\"><div class=\"col-2\">Описание</div><div class=\"col-11\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"card-body\"><div class=\"container\"><div class=\"row\"><label for=\"current\">Выбран для опроса   </label><br><input type=\"checkbox\" id=\"current\" name=\"current\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if q.Current {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" checked")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("></div><div class=\"row\"><div class=\"col-2\">Описание</div><div class=\"col-11\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(q.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 21, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 26, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -82,7 +92,7 @@ func QuizzesPanelPage(email string, quizzes []app.Quiz) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/edit-quiz?id=" + q.Id.Hex())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 31, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 36, Col: 75}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -100,7 +110,7 @@ func QuizzesPanelPage(email string, quizzes []app.Quiz) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/add-quiz")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 45, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/quizzespanelpage.templ`, Line: 50, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

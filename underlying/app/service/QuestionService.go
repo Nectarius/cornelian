@@ -103,16 +103,33 @@ func (r *QuestionService) GetQuestion(id string) (app.Question, error) {
 
 func (r *QuestionService) GetQuizzes() []app.Quiz {
 	var quizRepository = r.QuizRepository
-	return quizRepository.GetQuizzes()
+	var quizzes = quizRepository.GetQuizzes()
+
+	filteredQuizzes := filterBy(quizzes, func(p app.Quiz) bool {
+		return p.Active == true
+	})
+
+	return filteredQuizzes
 }
 
-func (r *QuestionService) UpdateQuiz(id string, header string, description string) error {
+func filterBy(quizzes []app.Quiz, filter func(app.Quiz) bool) []app.Quiz {
+	var result []app.Quiz
+	for _, p := range quizzes {
+		if filter(p) {
+			result = append(result, p)
+		}
+	}
+	return result
+}
+
+func (r *QuestionService) UpdateQuiz(id string, header string, description string, current bool) error {
 	var quizRepository = r.QuizRepository
 	var identifier, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return fmt.Errorf("failed to update question: %w", err)
 	}
-	return quizRepository.UpdateQuiz(identifier, header, description)
+	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
+	return quizRepository.UpdateQuiz(identifier, header, description, current)
 }
 
 func (r *QuestionService) GetQuizById(id string) (app.Quiz, error) {
@@ -123,10 +140,11 @@ func (r *QuestionService) GetQuizById(id string) (app.Quiz, error) {
 }
 
 func (r *QuestionService) AllQuestions() []app.Question {
-	out := r.GetQuiz().Questions
+	var quiz = r.GetQuiz()
+
+	out := quiz.Questions
 	sort.Slice(out, func(i, j int) bool {
 		return out[i].CreatedAt.After(out[j].CreatedAt)
-		//return out[i].CreatedAt.After(out[j].CreatedAt) && out[i].Status == app.StatusOpen
 	})
 	return out
 }

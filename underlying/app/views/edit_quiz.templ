@@ -9,6 +9,12 @@ templ EditQuiz(email string, quiz app.Quiz) {
 			<h5 class="card-title">Редактирование</h5>
 			<form>
 				<div class="form-group">
+
+
+                                <label for="current">  Выбран для опроса   </label><br>
+                                <input type="checkbox" id="quizcurrent" name="quizcurrent" checked?={ quiz.Current } >
+
+
 					<label for="quizHeader">Заголовок</label>
 					<textarea class="form-control" id="quizHeaderarea1" rows="5" name="quizheader">{quiz.Header}</textarea>
 

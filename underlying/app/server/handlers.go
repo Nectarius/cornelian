@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -48,9 +49,20 @@ func editQuizHandler(session *sessions.Session, accessModule *access.CornelianMo
 		quizText := r.FormValue("quizdescription")
 		quizHeader := r.FormValue("quizheader")
 
+		current := r.FormValue("quizcurrent")
+
+		var currentQuiz bool
+		if current == "on" {
+			currentQuiz = true
+		} else {
+			currentQuiz = false
+		}
+
+		fmt.Println("current + " + current)
+
 		var questionService = accessModule.QuestionService
 
-		err := questionService.UpdateQuiz(quizId, quizHeader, quizText)
+		err := questionService.UpdateQuiz(quizId, quizHeader, quizText, currentQuiz)
 
 		if err != nil {
 			http.Error(w, "error saving answer", http.StatusInternalServerError)

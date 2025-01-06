@@ -17,6 +17,11 @@ templ QuizzesPanelPage(email string, quizzes []app.Quiz) {
 
                      <div class="container">
                         <div class="row">
+                                <label for="current">  Выбран для опроса   </label><br>
+						        <input type="checkbox" id="current" name="current" checked?={ q.Current } >
+
+				        </div>
+                        <div class="row">
 				         	<div class="col-2">Описание</div>
 				        	<div class="col-11">{ q.Description }</div>
 				        </div>

@@ -43,6 +43,7 @@ func (r *QuizRepository) InsertQuizAndMakeCurrent(quiz app.Quiz) error {
 	var update = bson.M{
 		"$set": bson.M{
 			"current": current,
+			"tag":     " ",
 		},
 	}
 
@@ -53,6 +54,7 @@ func (r *QuizRepository) InsertQuizAndMakeCurrent(quiz app.Quiz) error {
 	}
 
 	quiz.Current = true
+	quiz.Tag = "TheOne"
 
 	_, err = collection.InsertOne(context.Background(), quiz)
 	if err != nil {
@@ -62,16 +64,35 @@ func (r *QuizRepository) InsertQuizAndMakeCurrent(quiz app.Quiz) error {
 	return err
 }
 
-func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, header string, description string) error {
+func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, header string, description string, current bool) error {
 
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
 	var filter = bson.M{"id": id}
+	var tag string
+	if current {
+		var update = bson.M{
+			"$set": bson.M{
+				"current": false,
+				"tag":     " ",
+			},
+		}
+		tag = "TheOne"
+		_, err := collection.UpdateMany(context.Background(), bson.M{}, update)
+		if err != nil {
+			fmt.Println("failed to update question: %w", err)
+			return fmt.Errorf("failed to update question: %w", err)
+		}
+	} else {
+		tag = " "
+	}
 
 	var update = bson.M{
 		"$set": bson.M{
 			"description": description,
 			"header":      header,
+			"current":     current,
+			"tag":         tag,
 		},
 	}
 
