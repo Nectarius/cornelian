@@ -15,7 +15,7 @@ func cap(in string) string {
 templ Card(question app.Question) {
 	<div class="card">
 		<div class="card-header">
-			if question.Status == app.StatusAnswered {
+			if question.Status == app.StatusAnswered && len(question.Answers) > 0 {
 				- <span class="text-success">Отвечено</span>
 			}
 		</div>

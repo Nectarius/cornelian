@@ -45,7 +45,7 @@ func Card(question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if question.Status == app.StatusAnswered {
+		if question.Status == app.StatusAnswered && len(question.Answers) > 0 {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("- <span class=\"text-success\">Отвечено</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

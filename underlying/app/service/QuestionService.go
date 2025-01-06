@@ -91,12 +91,14 @@ func (r *QuestionService) SaveAnswer(id string, text string, answeredBy string) 
 	return questionRepository.SaveAnswer(id, text, answeredBy)
 }
 
-func (r *QuestionService) AllForAuthorInStatus(email string, status app.Status) []app.Question {
+func (r *QuestionService) AllForAuthorInOpenStatus(email string) []app.Question {
 	var questions = r.AllForAssignedTo(email)
 	filtered := make([]app.Question, 0)
 	for _, q := range questions {
-		if q.Status == status {
+		if q.Status == app.StatusOpen || len(q.Answers) == 0 {
+
 			filtered = append(filtered, q)
+
 		}
 	}
 

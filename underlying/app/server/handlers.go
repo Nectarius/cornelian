@@ -281,7 +281,7 @@ func countOwnHandler(session *sessions.Session, accessModule *access.CornelianMo
 	questionService.AllQuestions()
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
-		all := len(questionService.AllForAuthorInStatus(email, app.StatusOpen))
+		all := len(questionService.AllForAuthorInOpenStatus(email))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }
