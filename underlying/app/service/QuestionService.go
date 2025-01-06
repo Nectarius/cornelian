@@ -21,6 +21,28 @@ func NewQuestionService(cache *conf.CacheConf, questionRepository *repository.Qu
 	return &QuestionService{CacheConf: *cache, QuestionRepository: *questionRepository, QuizRepository: *quizRepository}
 }
 
+func (r *QuestionService) InsertQuizAndMakeCurrent(quizHeader string, quizText string, email string) error {
+	var quizRepository = r.QuizRepository
+
+	//	talk := app.Talk{
+	//		ID:         primitive.NewObjectID().Hex(),
+	//		Title:      quizHeader,
+	//		AssignedTo: []string{"redvelvet@gmail.com"}, // change to assigned to
+	//	}
+
+	var quiz = app.Quiz{
+		Id:          primitive.NewObjectID(),
+		Header:      quizHeader,
+		Description: quizText,
+		Active:      true,
+		Current:     true,
+		Tag:         conf.CURRENT_TAG,
+		Questions:   []app.Question{},
+	}
+
+	return quizRepository.InsertQuizAndMakeCurrent(quiz)
+}
+
 func (r *QuestionService) GetQuiz() app.Quiz {
 	var questionRepository = r.QuestionRepository
 
@@ -84,13 +106,13 @@ func (r *QuestionService) GetQuizzes() []app.Quiz {
 	return quizRepository.GetQuizzes()
 }
 
-func (r *QuestionService) UpdateQuiz(id string, description string) error {
+func (r *QuestionService) UpdateQuiz(id string, header string, description string) error {
 	var quizRepository = r.QuizRepository
 	var identifier, err = primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return fmt.Errorf("failed to update question: %w", err)
 	}
-	return quizRepository.UpdateQuiz(identifier, description)
+	return quizRepository.UpdateQuiz(identifier, header, description)
 }
 
 func (r *QuestionService) GetQuizById(id string) (app.Quiz, error) {

@@ -36,7 +36,33 @@ func (r *QuizRepository) GetQuizById(id primitive.ObjectID) app.Quiz {
 	return quiz
 }
 
-func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, description string) error {
+func (r *QuizRepository) InsertQuizAndMakeCurrent(quiz app.Quiz) error {
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-data")
+	var current = false
+	var update = bson.M{
+		"$set": bson.M{
+			"current": current,
+		},
+	}
+
+	_, err := collection.UpdateMany(context.Background(), bson.M{}, update)
+	if err != nil {
+		fmt.Println("failed to update question: %w", err)
+		return fmt.Errorf("failed to update question: %w", err)
+	}
+
+	quiz.Current = true
+
+	_, err = collection.InsertOne(context.Background(), quiz)
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+	return err
+}
+
+func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, header string, description string) error {
 
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
@@ -45,6 +71,7 @@ func (r *QuizRepository) UpdateQuiz(id primitive.ObjectID, description string) e
 	var update = bson.M{
 		"$set": bson.M{
 			"description": description,
+			"header":      header,
 		},
 	}
 

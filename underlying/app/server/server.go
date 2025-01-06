@@ -24,6 +24,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/answer", answerQuestionPage(session, accessModule))
 	r.Get("/add-question", addQuestionPage(session, accessModule))
 	r.Get("/edit-question", editQuestionPage(session, accessModule))
+	r.Get("/add-quiz", addQuizPage(session, accessModule))
 
 	// Login handlers
 	r.Get("/auth", authStartHandler())
@@ -40,6 +41,8 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/mine", myQuestionsHandler(session, accessModule))
 
 	r.Post("/save-question", saveQuestionHandler(session, accessModule))
+	r.Post("/add-new-quiz", addNewQuizHandler(session, accessModule))
+
 	r.Post("/update-question", editQuestionHandler(session, accessModule))
 	r.Post("/update-quiz", editQuizHandler(session, accessModule))
 

@@ -46,10 +46,38 @@ func editQuizHandler(session *sessions.Session, accessModule *access.CornelianMo
 		var quizId = r.URL.Query().Get("id")
 
 		quizText := r.FormValue("quizdescription")
+		quizHeader := r.FormValue("quizheader")
 
 		var questionService = accessModule.QuestionService
 
-		err := questionService.UpdateQuiz(quizId, quizText)
+		err := questionService.UpdateQuiz(quizId, quizHeader, quizText)
+
+		if err != nil {
+			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			return
+		}
+
+		quizzes := questionService.GetQuizzes()
+
+		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
+	}
+}
+
+func addNewQuizHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := session.GetString(r, "email")
+		if email == "" {
+			http.Error(w, "not logged in", 401)
+			return
+		}
+
+		//questionID := r.FormValue("id")
+		quizText := r.FormValue("quizdescription")
+		quizHeader := r.FormValue("quizheader")
+
+		var questionService = accessModule.QuestionService
+
+		err := questionService.InsertQuizAndMakeCurrent(quizHeader, quizText, email)
 
 		if err != nil {
 			http.Error(w, "error saving answer", http.StatusInternalServerError)
@@ -156,6 +184,19 @@ func addQuestionPage(session *sessions.Session, accessModule *access.CornelianMo
 		var quiz = questionService.GetQuiz()
 
 		templ.Handler(views.AddQuestion(email, quiz)).ServeHTTP(w, r)
+	}
+}
+
+func addQuizPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		email := session.GetString(r, "email")
+		if email == "" {
+			http.Error(w, "not logged in", 401)
+			return
+		}
+
+		templ.Handler(views.AddQuizPage(email)).ServeHTTP(w, r)
 	}
 }
 

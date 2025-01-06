@@ -1,0 +1,32 @@
+package views
+
+
+templ AddQuizPage(email string) {
+	<div class="container">
+		<strong>Email</strong>: { email }
+		<div class="jumbotron">
+			<h5 class="card-title">Добавление нового Квиза</h5>
+			<div class="container">
+				<div class="row">
+					<div class="col-1">От</div>
+					<div class="col-11">{ email }</div>
+				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+			</div>
+			<form>
+			<div class="form-group">
+				<label for="quizHeader">Заголовок</label>
+				<textarea class="form-control" id="quizHeaderarea1" rows="5" name="quizheader">Какой - то заголовок</textarea>
+
+				<label for="quizTextarea1">Описание</label>
+				<textarea class="form-control" id="quizTextarea1" rows="5" name="quizdescription">Некое подобие описания ...</textarea>
+
+			</div>
+				<button type="submit" class="btn btn-primary" hx-post={ "/add-new-quiz"} hx-target="body">Добавить</button>
+				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
+			</form>
+		</div>
+	</div>
+}

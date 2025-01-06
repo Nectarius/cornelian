@@ -41,6 +41,9 @@ type Quiz struct {
 	Id          primitive.ObjectID
 	Header      string
 	Description string
+	Active      bool
+	Current     bool
 	Tag         string
+	Creator     string
 	Questions   []Question
 }
