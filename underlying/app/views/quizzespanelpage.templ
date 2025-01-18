@@ -4,54 +4,53 @@ import "github.com/nefarius/cornelian/underlying/app"
 
 templ QuizzesPanelPage(email string, quizzes []app.Quiz) {
 	<div class="container">
-		<strong>Email</strong>: { email }
-		<div id="quizzes">
-			for _, q := range quizzes {
+  <strong>Email:</strong> { email }
 
-			<div class="card">
-				<div class="card-header">
-					{ q.Header }
-
-				</div>
-				<div class="card-body">
-
-                     <div class="container">
-                        <div class="row">
-                                <label for="current">  Выбран для опроса   </label><br>
-						        <input type="checkbox" id="current" name="current" checked?={ q.Current } >
-
-				        </div>
-                        <div class="row">
-				         	<div class="col-2">Описание</div>
-				        	<div class="col-11">{ q.Description }</div>
-				        </div>
-
-												<div class="row">
-													<div class="col-12"><hr/></div>
-												</div>
-												<div class="row">
-													<div class="col-3 text-right">
-														<button
- 							                             class="btn btn-success"
- 							                             hx-get={ "/edit-quiz?id=" + q.Id.Hex() }
- 							                             hx-trigger="click"
- 							                             hx-target="body"
-														>Редактировать</button>
-													</div>
-												</div>
-                     </div>
+  <div id="quizzes">
+  for _, q := range quizzes {
+      <div class="card quiz-card">
+        <div class="card-header">
+          { q.Header }
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-auto">
+              <label for="current">Выбран для опроса</label><br>
+              <input type="checkbox" id="current" name="current" checked="{ q.Current }">
+            </div>
+            <div class="col">
+              <div class="row">
+                <div class="col-sm-2">Описание</div>
+                <div class="col">{ q.Description }</div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-md-auto ms-auto">
+                  <button
+                    class="btn btn-success"
+                    hx-get={ "/edit-quiz?id=" + q.Id.Hex() }
+                    hx-trigger="click"
+                    hx-target="body"
+                  >
+                    Редактировать
+                  </button>
+                  <button
+                    class="btn btn-outline-primary"
+                    hx-get="/"
+                    hx-trigger="click"
+                    hx-target="body"
+                  >
+                    Главная страничка
+                  </button>
                 </div>
-				<br/>
-			</div>
-			}
-		</div>
-		<button
- 				class="btn btn-primary"
-                    hx-get={ "/add-quiz" }
-						hx-trigger="click"
-						hx-target="body"
-		>
-		Добавить квиз
-		</button>
-	</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+  </div>
+
+  <button class="btn btn-primary" hx-get="/add-quiz" hx-trigger="click" hx-target="body">Добавить квиз</button>
+</div>
 }
