@@ -23,6 +23,11 @@ func SetupSessions() (*sessions.Session, error) {
 	session = sessions.New(secret)
 	session.Lifetime = 3 * time.Hour
 
+	return localSetupSessions(session)
+}
+
+func SetupSessionsForServerWithHttps(session *sessions.Session) (*sessions.Session, error) {
+
 	// Gothic session mgmt for social login
 	key := "Secret-session-key" // Replace with your SESSION_SECRET or similar
 	maxAge := 86400 * 30        // 30 days
@@ -48,6 +53,36 @@ func SetupSessions() (*sessions.Session, error) {
 	// uk server http://80.190.84.21/
 	goth.UseProviders(
 		google.New(clientID, clientSecret, "https://kornelian.com/auth/google/callback?provider=google", "email", "profile"),
+	)
+
+	return session, nil
+}
+
+func localSetupSessions(session *sessions.Session) (*sessions.Session, error) {
+
+	// Gothic session mgmt for social login
+	key := "Secret-session-key" // Replace with your SESSION_SECRET or similar
+	maxAge := 86400 * 30        // 30 days
+	isProd := false             // Set to true when serving over https
+
+	cookieStore := gsessions.NewCookieStore([]byte(key))
+	cookieStore.MaxAge(maxAge)
+
+	cookieStore.Options.Domain = "localhost"
+	cookieStore.Options.Path = ""
+	cookieStore.Options.HttpOnly = true // HttpOnly should always be enabled
+	cookieStore.Options.Secure = isProd
+
+	gothic.Store = cookieStore
+
+	// Read Google auth credentials from .credentials file.
+	clientID, clientSecret := readCredentials()
+
+	// local : http://localhost:5120/auth/google/callback
+	// server  https://kornelian.com/auth/google/callback?provider=google
+	// uk server http://80.190.84.21/
+	goth.UseProviders(
+		google.New(clientID, clientSecret, "http://localhost:5120/auth/google/callback", "email", "profile"),
 	)
 
 	return session, nil

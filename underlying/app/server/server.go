@@ -49,9 +49,11 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Post("/update-quiz", editQuizHandler(session, accessModule))
 
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
-	// r.Delete("/delete", deleteQuestionHandler(session, db))
-	// Load your certificate and key files
-	//
+
+	localListenAndServe(r)
+}
+
+func httpsListenAndServe(r *chi.Mux) {
 	// localhost
 	//certFile := "cert.pem"
 	//keyFile := "key.pem"
@@ -81,6 +83,10 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
+}
+
+func localListenAndServe(r *chi.Mux) {
+	http.ListenAndServe(":5120", r)
 }
 
 func indexPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
