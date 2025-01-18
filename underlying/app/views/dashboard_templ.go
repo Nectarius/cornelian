@@ -31,20 +31,20 @@ func Dashboard(email string, questions []app.Question) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><strong>Logged in as</strong>: ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><div class=\"user-info\"><strong>Logged in as:</strong> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/dashboard.templ`, Line: 7, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/dashboard.templ`, Line: 8, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Log out</a><div class=\"jumbotron\"><h2 class=\"text-success  text-center\"><span class=\"fa fa-user\"></span> Вопросы </h2><button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-primary\" hx-get=\"/quizzes-panel\" hx-trigger=\"click\" hx-target=\"body\">Квизы</button>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Log out</a></div><div class=\"jumbotron\"><h2 class=\"text-success text-center\"><i class=\"fa fa-user\"></i> Questions</h2><div class=\"button-group\"><button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-primary\" hx-get=\"/quizzes-panel\" hx-trigger=\"click\" hx-target=\"body\">Квизы</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
