@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/tls"
+	"fmt"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -48,9 +50,37 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 	// r.Delete("/delete", deleteQuestionHandler(session, db))
+	// Load your certificate and key files
+	//
+	// localhost
+	//certFile := "cert.pem"
+	//keyFile := "key.pem"
+
+	// kornelian host
+	certFile := "kornelian.com.pem"
+	keyFile := "kornelian.com.key"
+
+	// Create a TLS configuration
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		//fmt.Println("Error loading certificate:", err)
+		return
+	}
+	config := &tls.Config{Certificates: []tls.Certificate{cert}}
+	server := &http.Server{
+		Addr:      ":443", // Listen on port 443 (HTTPS)
+		Handler:   r,
+		TLSConfig: config,
+	}
 
 	// Start plain HTTP listener
-	_ = http.ListenAndServe(":3000", r)
+	//_ = http.ListenAndServe(":5120", r)
+
+	fmt.Println("Server listening on HTTPS...")
+	err = server.ListenAndServeTLS("", "") // Use cert and key from config
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }
 
 func indexPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {

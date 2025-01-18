@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+
 	"time"
 
 	"github.com/golangcollege/sessions"
@@ -30,7 +31,9 @@ func SetupSessions() (*sessions.Session, error) {
 	cookieStore := gsessions.NewCookieStore([]byte(key))
 	cookieStore.MaxAge(maxAge)
 
-	cookieStore.Options.Domain = "localhost"
+	// local
+	// cookieStore.Options.Domain = "localhost"
+	cookieStore.Options.Domain = "kornelian.com"
 	cookieStore.Options.Path = ""
 	cookieStore.Options.HttpOnly = true // HttpOnly should always be enabled
 	cookieStore.Options.Secure = isProd
@@ -40,8 +43,11 @@ func SetupSessions() (*sessions.Session, error) {
 	// Read Google auth credentials from .credentials file.
 	clientID, clientSecret := readCredentials()
 
+	// local : http://localhost:5120/auth/google/callback
+	// server  https://kornelian.com/auth/google/callback?provider=google
+	// uk server http://80.190.84.21/
 	goth.UseProviders(
-		google.New(clientID, clientSecret, "http://localhost:3000/auth/google/callback", "email", "profile"),
+		google.New(clientID, clientSecret, "https://kornelian.com/auth/google/callback?provider=google", "email", "profile"),
 	)
 
 	return session, nil
@@ -56,7 +62,19 @@ func logoutHandler(session *sessions.Session) func(w http.ResponseWriter, r *htt
 }
 
 func readCredentials() (string, string) {
+	//	currentFile, err := os.Executable()
+	//    if err != nil {
+	//    slog.Error(err.Error())
+	//	os.Exit(1)
+	//    }
+	//    currentDir := filepath.Dir(currentFile)
+
+	// Construct the path to the file you want to read
+	//        filePath := filepath.Join(currentDir, "underlying/recources/.credentials")
+
 	credzData, err := os.ReadFile(".credentials")
+
+	//credzData, err := os.ReadFile("underlying/recources/.credentials")
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
