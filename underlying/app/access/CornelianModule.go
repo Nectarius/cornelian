@@ -4,6 +4,7 @@ import (
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"github.com/nefarius/cornelian/underlying/app/repository"
 	"github.com/nefarius/cornelian/underlying/app/service"
+	"github.com/nefarius/cornelian/underlying/app/store"
 )
 
 type CornelianModule struct {
@@ -21,8 +22,8 @@ func NewCornelianModule() *CornelianModule {
 	var personRepository = &repository.PersonRepository{Conf: *mongoConf}
 	var quizRepository = &repository.QuizRepository{Conf: *mongoConf}
 	var questionService = service.NewQuestionService(cacheConf, questionRepository, quizRepository)
-	// var defaultData = store.GetDefaultQuizData()
-	// panelViewRepository.InsertQuiz(defaultData)
+	var defaultData = store.GetDefaultQuizData()
+	questionRepository.InsertQuiz(defaultData)
 	return &CornelianModule{PersonRepository: personRepository, QuestionRepository: questionRepository, QuestionService: questionService, MongoConf: mongoConf, CacheConf: cacheConf}
 }
 

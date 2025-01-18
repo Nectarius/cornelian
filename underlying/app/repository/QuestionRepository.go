@@ -175,10 +175,10 @@ func (r *QuestionRepository) AddQuestion(text string, answeredBy string) error {
 	return err2
 }
 
-func (r *QuestionRepository) InsertQuiz(panelView app.Quiz) primitive.ObjectID {
+func (r *QuestionRepository) InsertQuiz(quiz app.Quiz) primitive.ObjectID {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("quiz-data")
-	one, err := collection.InsertOne(context.Background(), panelView)
+	one, err := collection.InsertOne(context.Background(), quiz)
 	if err != nil {
 		log.Fatal(err)
 		panic(err)

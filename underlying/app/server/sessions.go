@@ -23,6 +23,7 @@ func SetupSessions() (*sessions.Session, error) {
 	session = sessions.New(secret)
 	session.Lifetime = 3 * time.Hour
 
+	// return SetupSessionsForServerWithHttps(session)
 	return localSetupSessions(session)
 }
 
