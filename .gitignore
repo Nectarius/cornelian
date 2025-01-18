@@ -18,6 +18,7 @@
 *.pem
 *.tar
 *.key
+*templ-demo
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
