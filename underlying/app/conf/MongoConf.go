@@ -13,20 +13,17 @@ type MongoConf struct {
 	MongoClient *mongo.Client
 }
 
-func NewMongoConf() *MongoConf {
+func NewMongoConf() (*MongoConf, error) {
 
 	var mongoUrlPath = "mongodb://admin:8BlanchE8@80.190.84.21:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
 
 	clientOptions := options.Client().ApplyURI(mongoUrlPath)
 	client, err := mongo.Connect(context.Background(), clientOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	return &MongoConf{
 		MongoUri:    mongoUrlPath,
 		MongoClient: client,
-	}
+	}, err
 }
 
 func (r *MongoConf) Clear() {

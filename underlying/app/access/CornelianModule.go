@@ -1,31 +1,49 @@
 package access
 
 import (
+	"log"
+
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"github.com/nefarius/cornelian/underlying/app/repository"
 	"github.com/nefarius/cornelian/underlying/app/service"
 )
 
+// CornelianModule holds the repositories, services, and configurations for the application.
 type CornelianModule struct {
-	PersonRepository   *repository.PersonRepository
-	QuestionRepository *repository.QuestionRepository
-	QuestionService    *service.QuestionService
-	MongoConf          *conf.MongoConf
-	CacheConf          *conf.CacheConf
+    PersonRepository   *repository.PersonRepository
+    QuestionRepository *repository.QuestionRepository
+    QuestionService    *service.QuestionService
+    MongoConf          *conf.MongoConf
+    CacheConf          *conf.CacheConf
 }
 
+// NewCornelianModule creates and initializes a new instance of CornelianModule.
 func NewCornelianModule() *CornelianModule {
-	var mongoConf = conf.NewMongoConf()
-	var cacheConf = conf.NewCacheConf()
-	var questionRepository = &repository.QuestionRepository{Conf: *mongoConf}
-	var personRepository = &repository.PersonRepository{Conf: *mongoConf}
-	var quizRepository = &repository.QuizRepository{Conf: *mongoConf}
-	var questionService = service.NewQuestionService(cacheConf, questionRepository, quizRepository)
-	//var defaultData = store.GetDefaultQuizData()
-	//questionRepository.InsertQuiz(defaultData)
-	return &CornelianModule{PersonRepository: personRepository, QuestionRepository: questionRepository, QuestionService: questionService, MongoConf: mongoConf, CacheConf: cacheConf}
+    mongoConf, err := conf.NewMongoConf()
+    if err != nil {
+        log.Fatalf("Failed to initialize Mongo configuration: %v", err)
+    }
+
+    cacheConf, err := conf.NewCacheConf()
+    if err != nil {
+        log.Fatalf("Failed to initialize Cache configuration: %v", err)
+    }
+
+    questionRepository := &repository.QuestionRepository{Conf: *mongoConf}
+    personRepository := &repository.PersonRepository{Conf: *mongoConf}
+    quizRepository := &repository.QuizRepository{Conf: *mongoConf}
+    questionService := service.NewQuestionService(cacheConf, questionRepository, quizRepository)
+
+    return &CornelianModule{
+        PersonRepository:   personRepository,
+        QuestionRepository: questionRepository,
+        QuestionService:    questionService,
+        MongoConf:          mongoConf,
+        CacheConf:          cacheConf,
+    }
 }
 
+// Clear clears the MongoDB configuration.
 func (tf *CornelianModule) Clear() {
-	tf.MongoConf.Clear()
+    tf.MongoConf.Clear()
 }
