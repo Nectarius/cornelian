@@ -12,6 +12,7 @@ import (
 	"github.com/nefarius/cornelian/underlying/app/access"
 	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/nefarius/cornelian/underlying/app/views"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func StartServer(session *sessions.Session, db *store.InMem, accessModule *access.CornelianModule) {
@@ -50,8 +51,40 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 
-	// httpsListenAndServe(r)
-	localListenAndServe(r)
+	//httpsListenAndServeWithLetsEncrypt(r)
+	httpsListenAndServe(r)
+	//localListenAndServe(r)
+}
+
+func httpsListenAndServeWithLetsEncrypt(r *chi.Mux) {
+	// localhost
+	//certFile := "cert.pem"
+	//keyFile := "key.pem"
+
+	// kornelian host
+	m := autocert.Manager{
+		Prompt:     autocert.AcceptTOS,                      // Choose how to handle challenges (e.g., HTTP-01)
+		HostPolicy: autocert.HostWhitelist("kornelian.com"), // Add your domain here
+		Cache:      autocert.DirCache("certs"),              // Directory to store certificates
+	}
+
+	// Create a TLS configuration
+
+	config := &tls.Config{GetCertificate: m.GetCertificate}
+	server := &http.Server{
+		Addr:      ":443", // Listen on port 443 (HTTPS)
+		Handler:   r,
+		TLSConfig: config,
+	}
+
+	// Start plain HTTP listener
+	//_ = http.ListenAndServe(":5120", r)
+	fmt.Println("Configured TLS with autocert.Manager...")
+	fmt.Println("Server listening on HTTPS...")
+	err := server.ListenAndServeTLS("", "") // Use cert and key from config
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }
 
 func httpsListenAndServe(r *chi.Mux) {

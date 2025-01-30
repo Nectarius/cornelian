@@ -23,7 +23,7 @@ docker run -d -p 443:443 cornelian
 docker build -t cornelian -f Dockerfile ./cornelian
 
 docker load -i kornelian.tar
-
+docker load -i kornelian_with_mkcert.tar
 
 docker save -o kornelian.tar cornelian:latest
 
