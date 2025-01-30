@@ -52,8 +52,8 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 
 	//httpsListenAndServeWithLetsEncrypt(r)
-	httpsListenAndServe(r)
-	//localListenAndServe(r)
+	//httpsListenAndServe(r)
+	localListenAndServe(r)
 }
 
 func httpsListenAndServeWithLetsEncrypt(r *chi.Mux) {
