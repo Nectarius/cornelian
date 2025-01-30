@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -12,23 +11,29 @@ import (
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
 
+// Utility function to check if the user is logged in
+func checkLoggedIn(session *sessions.Session, w http.ResponseWriter, r *http.Request) (string, bool) {
+	email := session.GetString(r, "email")
+	if email == "" {
+		http.Error(w, "not logged in", http.StatusUnauthorized)
+		return "", false
+	}
+	return email, true
+}
+
 func editQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
-		var questionId = r.FormValue("id")
+		questionID := r.FormValue("id")
 		questionText := r.FormValue("questiontext")
 
-		var questionService = accessModule.QuestionService
-
-		err := questionService.UpdateQuestion(questionId, questionText, email)
-
+		err := accessModule.QuestionService.UpdateQuestion(questionID, questionText, email)
 		if err != nil {
-			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			http.Error(w, "error saving question", http.StatusInternalServerError)
 			return
 		}
 
@@ -38,87 +43,62 @@ func editQuestionHandler(session *sessions.Session, accessModule *access.Corneli
 
 func editQuizHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
-		var quizId = r.URL.Query().Get("id")
-
+		quizID := r.URL.Query().Get("id")
 		quizText := r.FormValue("quizdescription")
 		quizHeader := r.FormValue("quizheader")
-
 		current := r.FormValue("quizcurrent")
 
-		var currentQuiz bool
-		if current == "on" {
-			currentQuiz = true
-		} else {
-			currentQuiz = false
-		}
+		currentQuiz := current == "on"
 
-		fmt.Println("current + " + current)
-
-		var questionService = accessModule.QuestionService
-
-		err := questionService.UpdateQuiz(quizId, quizHeader, quizText, currentQuiz)
-
+		err := accessModule.QuestionService.UpdateQuiz(quizID, quizHeader, quizText, currentQuiz)
 		if err != nil {
-			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			http.Error(w, "error saving quiz", http.StatusInternalServerError)
 			return
 		}
 
-		quizzes := questionService.GetQuizzes()
-
+		quizzes := accessModule.QuestionService.GetQuizzes()
 		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
 	}
 }
 
 func addNewQuizHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
-		//questionID := r.FormValue("id")
 		quizText := r.FormValue("quizdescription")
 		quizHeader := r.FormValue("quizheader")
 
-		var questionService = accessModule.QuestionService
-
-		err := questionService.InsertQuizAndMakeCurrent(quizHeader, quizText, email)
-
+		err := accessModule.QuestionService.InsertQuizAndMakeCurrent(quizHeader, quizText, email)
 		if err != nil {
-			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			http.Error(w, "error saving quiz", http.StatusInternalServerError)
 			return
 		}
 
-		quizzes := questionService.GetQuizzes()
-
+		quizzes := accessModule.QuestionService.GetQuizzes()
 		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
 	}
 }
 
 func saveQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
-		//questionID := r.FormValue("id")
 		questionText := r.FormValue("questiontext")
 
-		var questionService = accessModule.QuestionService
-
-		err := questionService.AddQuestion(questionText, email)
-
+		err := accessModule.QuestionService.AddQuestion(questionText, email)
 		if err != nil {
-			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			http.Error(w, "error saving question", http.StatusInternalServerError)
 			return
 		}
 
@@ -128,19 +108,15 @@ func saveQuestionHandler(session *sessions.Session, accessModule *access.Corneli
 
 func answerQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
-		var questionId = r.URL.Query().Get("id")
+		questionID := r.URL.Query().Get("id")
 		answerText := r.FormValue("answertext")
 
-		var questionService = accessModule.QuestionService
-
-		err := questionService.SaveAnswer(questionId, answerText, email)
-
+		err := accessModule.QuestionService.SaveAnswer(questionID, answerText, email)
 		if err != nil {
 			http.Error(w, "error saving answer", http.StatusInternalServerError)
 			return
@@ -151,33 +127,28 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 }
 
 func quizzesPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionService = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		// check permissions
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		// questionID := r.FormValue("id")
-		quizzes := questionService.GetQuizzes()
 
+		quizzes := accessModule.QuestionService.GetQuizzes()
 		templ.Handler(views.QuizzesPanelPage(email, quizzes)).ServeHTTP(w, r)
 	}
 }
 
 func answerQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionRepository = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
+
 		questionID := r.FormValue("id")
-		question, err := questionRepository.GetQuestion(questionID)
+		question, err := accessModule.QuestionService.GetQuestion(questionID)
 		if err != nil {
-			http.Error(w, "question not found", 404)
+			http.Error(w, "question not found", http.StatusNotFound)
 			return
 		}
 		templ.Handler(views.AnswerQuestion(email, question)).ServeHTTP(w, r)
@@ -185,26 +156,21 @@ func answerQuestionPage(session *sessions.Session, accessModule *access.Cornelia
 }
 
 func addQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionService = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		//questionID := r.FormValue("id")
-		var quiz = questionService.GetQuiz()
 
+		quiz := accessModule.QuestionService.GetQuiz()
 		templ.Handler(views.AddQuestion(email, quiz)).ServeHTTP(w, r)
 	}
 }
 
 func addQuizPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
 
@@ -213,17 +179,16 @@ func addQuizPage(session *sessions.Session, accessModule *access.CornelianModule
 }
 
 func editQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionService = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		var questionId = r.URL.Query().Get("id")
-		var question, err = questionService.GetQuestion(questionId)
+
+		questionID := r.URL.Query().Get("id")
+		question, err := accessModule.QuestionService.GetQuestion(questionID)
 		if err != nil {
-			http.Error(w, "question not found", 404)
+			http.Error(w, "question not found", http.StatusNotFound)
 			return
 		}
 		templ.Handler(views.EditQuestion(email, question)).ServeHTTP(w, r)
@@ -231,17 +196,16 @@ func editQuestionPage(session *sessions.Session, accessModule *access.CornelianM
 }
 
 func editQuizPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionService = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		var quizId = r.URL.Query().Get("id")
-		var quiz, err = questionService.GetQuizById(quizId)
+
+		quizID := r.URL.Query().Get("id")
+		quiz, err := accessModule.QuestionService.GetQuizById(quizID)
 		if err != nil {
-			http.Error(w, "question not found", 404)
+			http.Error(w, "quiz not found", http.StatusNotFound)
 			return
 		}
 		templ.Handler(views.EditQuiz(email, quiz)).ServeHTTP(w, r)
@@ -250,13 +214,12 @@ func editQuizPage(session *sessions.Session, accessModule *access.CornelianModul
 
 func myQuestionsHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		var repository = accessModule.QuestionService
-		questions := repository.AllForAssignedTo(email)
+
+		questions := accessModule.QuestionService.AllForAssignedTo(email)
 		session.Put(r, "view", "mine")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
 	}
@@ -264,51 +227,32 @@ func myQuestionsHandler(session *sessions.Session, accessModule *access.Cornelia
 
 func allQuestionsHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		if email == "" {
-			http.Error(w, "not logged in", 401)
+		_, ok := checkLoggedIn(session, w, r)
+		if !ok {
 			return
 		}
-		var repository = accessModule.QuestionService
-		questions := repository.AllQuestions()
+
+		questions := accessModule.QuestionService.AllQuestions()
 		session.Put(r, "view", "all")
 		templ.Handler(views.Questions(questions)).ServeHTTP(w, r)
 	}
 }
 
 func countOwnHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var questionService = accessModule.QuestionService
-	questionService.AllQuestions()
 	return func(w http.ResponseWriter, r *http.Request) {
-		email := session.GetString(r, "email")
-		all := len(questionService.AllForAuthorInOpenStatus(email))
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		all := len(accessModule.QuestionService.AllForAuthorInOpenStatus(email))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }
 
 func countAllHandler(accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	var repository = accessModule.QuestionService
 	return func(w http.ResponseWriter, r *http.Request) {
-		all := len(repository.AllInStatus(app.StatusOpen))
+		all := len(accessModule.QuestionService.AllInStatus(app.StatusOpen))
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }
-
-// func deleteQuestionHandler(session *sessions.Session, db *store.InMem) func(w http.ResponseWriter, r *http.Request) {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		email := session.GetString(r, "email")
-// 		if email == "" {
-// 			http.Error(w, "not logged in", 401)
-// 			return
-// 		}
-
-// 		questionID := r.URL.Query().Get("id")
-// 		db.Delete(questionID)
-// 		if session.GetString(r, "view") == "mine" {
-// 			templ.Handler(views.Questions(db.AllForAssignedTo(email))).ServeHTTP(w, r)
-// 		} else {
-// 			templ.Handler(views.Questions(db.All())).ServeHTTP(w, r)
-// 		}
-
-// 	}
-// }
