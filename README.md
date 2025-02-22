@@ -47,3 +47,28 @@ Some may say, there is a potential security problem: unprivileged users now may 
 
 iptables -I INPUT -p tcp --dport 444:1024 -j DROP
 iptables -I INPUT -p udp --dport 444:1024 -j DROP
+
+ mongosh --port 27017
+
+db.createUser(
+   {
+     user: "nefarius",
+     pwd: "8BlanchE8", // or cleartext password
+     roles: [
+       { role: "userAdminAnyDatabase", db: "admin" },
+       { role: "readWriteAnyDatabase", db: "admin" }
+     ]
+   }
+ )
+
+ mongosh --port 27017 --authenticationDatabase "admin"\
+      -u "myUserAdmin" -p
+
+
+Pull the MongoDB Docker Image
+
+docker pull mongodb/mongodb-community-server:latest
+
+Run the Image as a Container
+
+docker run --name mongodb -p 27017:27017 -d mongodb/mongodb-community-server:latest
