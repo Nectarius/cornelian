@@ -15,8 +15,9 @@ type MongoConf struct {
 
 func NewMongoConf() (*MongoConf, error) {
 
-	var mongoUrlPath = "mongodb://nefarius:8BlanchE8@80.190.84.21:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
-
+	var mongoUrlPath = "mongodb://admin:8BlanchE8@80.190.84.21:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
+	//var mongoUrlPath = "mongodb://nefarius:8BlanchE8@156.67.30.28:27017/?directConnection=true&serverSelectionTimeoutMS=2000"
+	//
 	clientOptions := options.Client().ApplyURI(mongoUrlPath)
 	client, err := mongo.Connect(context.Background(), clientOptions)
 

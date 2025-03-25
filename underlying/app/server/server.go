@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golangcollege/sessions"
+	"github.com/nefarius/cornelian/underlying/app"
 	"github.com/nefarius/cornelian/underlying/app/access"
 	"github.com/nefarius/cornelian/underlying/app/store"
 	"github.com/nefarius/cornelian/underlying/app/views"
@@ -28,6 +29,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/add-question", addQuestionPage(session, accessModule))
 	r.Get("/edit-question", editQuestionPage(session, accessModule))
 	r.Get("/add-quiz", addQuizPage(session, accessModule))
+	r.Get("/current-quiz", currentQuizPanelPage(session, accessModule))
 
 	// Login handlers
 	r.Get("/auth", authStartHandler())
@@ -50,6 +52,8 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Post("/update-quiz", editQuizHandler(session, accessModule))
 
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
+
+	r.Post("/answercurrentquestion", answerCurrentQuestionHandler(session, accessModule))
 
 	//httpsListenAndServeWithLetsEncrypt(r)
 	//httpsListenAndServe(r)
@@ -128,13 +132,18 @@ func indexPage(session *sessions.Session, accessModule *access.CornelianModule) 
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := session.GetString(r, "email")
 		if email != "" {
+			var person = accessModule.PersonRepository.GetPersonByEmail(email)
 			if session.GetString(r, "view") == "mine" {
-				templ.Handler(views.Index(email, questionService.AllForAssignedTo(email))).ServeHTTP(w, r)
+				templ.Handler(views.Index(person, questionService.AllForAssignedTo(email))).ServeHTTP(w, r)
 			} else {
-				templ.Handler(views.Index(email, questionService.AllQuestions())).ServeHTTP(w, r)
+				templ.Handler(views.Index(person, questionService.AllQuestions())).ServeHTTP(w, r)
 			}
 			return
 		}
-		templ.Handler(views.Index("", nil)).ServeHTTP(w, r)
+		var unknownPerson = app.Person{
+			Email: "",
+			Admin: false,
+		}
+		templ.Handler(views.Index(unknownPerson, nil)).ServeHTTP(w, r)
 	}
 }

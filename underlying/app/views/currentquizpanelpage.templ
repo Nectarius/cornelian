@@ -1,0 +1,36 @@
+package views
+
+import "github.com/nefarius/cornelian/underlying/app"
+
+templ CurrentQuizPanelPage(email string, question app.Question) {
+	<div class="container">
+		<strong>Email</strong>: { email }
+		<div class="jumbotron">
+			<h5 class="card-title">Текущий вопрос</h5>
+			<div class="container">
+				<div class="row">
+					<div class="col-1">От</div>
+					<div class="col-11">{ email }</div>
+				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+			</div>
+			<form>
+				<div class="form-group">
+					<label for="answerTextarea1">Описание вопроса</label>
+					<textarea class="form-control" id="questionTextarea1" rows="5" name="questiontext">{question.Text}</textarea>
+				</div>
+
+				<div class="form-group">
+					<label for="answerTextarea1">Ваш ответ</label>
+					<textarea class="form-control" id="answerTextarea1" rows="5" name="answertext"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary" hx-post={ "/answercurrentquestion?id=" + question.ID } hx-target="body">Ответить</button>
+
+
+				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
+			</form>
+		</div>
+	</div>
+}

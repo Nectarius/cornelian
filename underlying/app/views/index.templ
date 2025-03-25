@@ -2,7 +2,7 @@ package views
 
 import "github.com/nefarius/cornelian/underlying/app"
 
-templ Index(email string, questions []app.Question) {
+templ Index(person app.Person, questions []app.Question) {
 	<html>
 		<head>
 			<title>Google SignIn</title>
@@ -18,10 +18,10 @@ templ Index(email string, questions []app.Question) {
 			<script src="https://unpkg.com/htmx.org@1.9.9" integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX" crossorigin="anonymous"></script>
 		</head>
 		<body>
-			if email == "" {
+			if person.Email == "" {
 				@Login()
 			} else {
-				@Dashboard(email, questions)
+				@Dashboard(person, questions)
 			}
 		</body>
 	</html>

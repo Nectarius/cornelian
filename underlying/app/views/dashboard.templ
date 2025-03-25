@@ -2,10 +2,10 @@ package views
 
 import "github.com/nefarius/cornelian/underlying/app"
 
-templ Dashboard(email string, questions []app.Question) {
+templ Dashboard(person app.Person, questions []app.Question) {
 	<div class="container">
   <div class="user-info">
-    <strong>Logged in as:</strong> { email }
+    <strong>Logged in as:</strong> { person.Email }
     <a href="/logout" hx-get="/logout" hx-target="html">Log out</a>
   </div>
 
@@ -31,12 +31,24 @@ templ Dashboard(email string, questions []app.Question) {
       </button>
 
       <button
+        class="btn btn-secondary"
+        hx-get="/current-quiz"
+        hx-trigger="click"
+        hx-target="body">
+    				Квиз <span hx-get="/countmine" hx-trigger="every 5s" hx-target="this"><span hx-get="/countmine" hx-trigger="load" hx-target="this"></span></span>
+
+      </button>
+
+      if person.Admin {
+      <button
         class="btn btn-primary"
         hx-get="/quizzes-panel"
         hx-trigger="click"
         hx-target="body">
         Квизы
       </button>
+      }
+
     </div>
 
     @Questions(questions)

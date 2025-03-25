@@ -17,6 +17,7 @@ const (
 type Person struct {
 	Id    primitive.ObjectID
 	Email string
+	Admin bool
 }
 
 type Question struct {

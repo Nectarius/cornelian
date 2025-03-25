@@ -1,0 +1,28 @@
+package views
+
+
+templ QuizFinishedPanelPage(email string) {
+	<div class="container">
+		<strong>Email</strong>: { email }
+		<div class="jumbotron">
+			<h5 class="card-title">Опрос окончен</h5>
+			<div class="container">
+				<div class="row">
+					<div class="col-1">От</div>
+					<div class="col-11">{ email }</div>
+				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+			</div>
+			<form>
+				<div class="form-group">
+					<label for="answerTextarea1">Спасибо за участие ! </label>
+
+				</div>
+
+				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Вернуться на главную</button>
+			</form>
+		</div>
+	</div>
+}

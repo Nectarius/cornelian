@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -106,6 +107,36 @@ func saveQuestionHandler(session *sessions.Session, accessModule *access.Corneli
 	}
 }
 
+func answerCurrentQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		questionID := r.URL.Query().Get("id")
+		answerText := r.FormValue("answertext")
+
+		err := accessModule.QuestionService.SaveAnswer(questionID, answerText, email)
+		if err != nil {
+			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			return
+		}
+
+		// set local date time
+		currentQuiz := accessModule.QuestionService.GetQuiz()
+		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
+		print("active" + currentQuiz.Header)
+		print("len " + fmt.Sprint(len(questions)))
+		if len(questions) > 0 {
+			var currentQuestion = questions[0]
+			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
+		} else {
+			templ.Handler(views.QuizFinishedPanelPage(email)).ServeHTTP(w, r)
+		}
+	}
+}
+
 func answerQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, ok := checkLoggedIn(session, w, r)
@@ -123,6 +154,27 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 		}
 
 		indexPage(session, accessModule)(w, r)
+	}
+}
+
+func currentQuizPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+		currentQuiz := accessModule.QuestionService.GetQuiz()
+		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
+		print("active" + currentQuiz.Header)
+
+		print("len " + fmt.Sprint(len(questions)))
+		if len(questions) > 0 {
+			var currentQuestion = questions[0]
+			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
+		} else {
+			templ.Handler(views.QuizFinishedPanelPage(email)).ServeHTTP(w, r)
+		}
+
 	}
 }
 
