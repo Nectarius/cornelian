@@ -1,20 +1,6 @@
 mongosh --port 27017
 
-db.createUser(
-   {
-     user: "admin",
-     pwd: "8BlanchE8", // or cleartext password
-     roles: [
-       { role: "userAdminAnyDatabase", db: "admin" },
-       { role: "readWriteAnyDatabase", db: "admin" }
-     ]
-   }
- )
-mongosh --port 27017 -u "admin" --authenticationDatabase 'admin' -p
 
- mongosh --port 27017 --authenticationDatabase "admin" -u "admin" -p "8BlanchE8"
-
-mongo admin -u "admin" -p "8BlanchE8" --authenticationDatabase admin
 
 Pull the MongoDB Docker Image
 
