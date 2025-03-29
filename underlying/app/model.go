@@ -36,6 +36,15 @@ type Answer struct {
 	AnsweredAt time.Time
 }
 
+type AnswerInfo struct {
+	ID         string
+	QuestionId string
+	Text       string
+	Current    bool
+	Started    time.Time
+	Completed  time.Time
+}
+
 type Quiz struct {
 	Id          primitive.ObjectID
 	Header      string
@@ -46,4 +55,13 @@ type Quiz struct {
 	Creator     string
 	Questions   []Question
 	AssignedTo  []string
+}
+
+type QuizInfo struct {
+	Id        primitive.ObjectID
+	QuizId    primitive.ObjectID
+	Email     string
+	Started   time.Time
+	Completed time.Time
+	Answers   []AnswerInfo
 }

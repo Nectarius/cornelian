@@ -38,7 +38,7 @@ func (r *PersonRepository) InsertPersonIfNotPresent(person app.Person) error {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("person")
 
-	filter := bson.M{"email": person.Email, "admin": false}
+	filter := bson.M{"email": person.Email}
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {
 		panic(err)

@@ -1,16 +1,26 @@
 package views
+import "github.com/nefarius/cornelian/underlying/app"
+import  "strconv"
 
-
-templ QuizFinishedPanelPage(email string) {
+templ QuizFinishedPanelPage(quizInfo app.QuizInfo) {
 	<div class="container">
-		<strong>Email</strong>: { email }
+		<strong>Email</strong>: { quizInfo.Email }
 		<div class="jumbotron">
 			<h5 class="card-title">Опрос окончен</h5>
 			<div class="container">
 				<div class="row">
 					<div class="col-1">От</div>
-					<div class="col-11">{ email }</div>
+					<div class="col-11">{ quizInfo.Email }</div>
 				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+				for _, answer := range quizInfo.Answers {
+					<div class="row">
+						<div class="col-11">Ответ : { answer.Text }</div>
+						<div class="col-11">Время : { strconv.FormatFloat(answer.Completed.Sub(answer.Started).Seconds(), 'f', 3, 64) }</div>
+					</div>
+				}
 				<div class="row">
 					<div class="col-12"><hr/></div>
 				</div>
@@ -18,7 +28,6 @@ templ QuizFinishedPanelPage(email string) {
 			<form>
 				<div class="form-group">
 					<label for="answerTextarea1">Спасибо за участие ! </label>
-
 				</div>
 
 				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Вернуться на главную</button>

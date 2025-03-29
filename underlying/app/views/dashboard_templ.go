@@ -44,7 +44,17 @@ func Dashboard(person app.Person, questions []app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Log out</a></div><div class=\"jumbotron\"><h2 class=\"text-success text-center\"><i class=\"bi bi-graph-up\"></i> Вопросы</h2><div class=\"button-group\"><button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/current-quiz\" hx-trigger=\"click\" hx-target=\"body\">Квиз <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <a href=\"/logout\" hx-get=\"/logout\" hx-target=\"html\">Log out</a></div><div class=\"jumbotron\"><h2 class=\"text-success text-center\"><i class=\"bi bi-graph-up\"></i> Вопросы</h2><div class=\"button-group\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if person.Admin {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-info\" hx-get=\"/all\" hx-trigger=\"click\" hx-target=\"#questions\">Все вопросы <span hx-get=\"/countall\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countall\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-secondary\" hx-get=\"/mine\" hx-trigger=\"click\" hx-target=\"#questions\">Мои вопросы <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> <button class=\"btn btn-secondary\" hx-get=\"/current-quiz\" hx-trigger=\"click\" hx-target=\"body\">Квиз <span hx-get=\"/countmine\" hx-trigger=\"every 5s\" hx-target=\"this\"><span hx-get=\"/countmine\" hx-trigger=\"load\" hx-target=\"this\"></span></span></button> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

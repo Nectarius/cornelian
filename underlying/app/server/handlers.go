@@ -22,6 +22,61 @@ func checkLoggedIn(session *sessions.Session, w http.ResponseWriter, r *http.Req
 	return email, true
 }
 
+func currentQuizPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+		currentQuiz := accessModule.QuestionService.GetQuiz()
+		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
+
+		accessModule.QuestionService.CreateIfNotExist(currentQuiz.Id, email)
+
+		if len(questions) > 0 {
+			var currentQuestion = questions[0]
+			accessModule.QuestionService.StartAnswering(currentQuiz.Id, email, currentQuestion.ID)
+			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
+		} else {
+			var quizInfo = accessModule.QuestionService.QuizInfoRepository.GetQuizByIdAndEmail(currentQuiz.Id, email)
+			templ.Handler(views.QuizFinishedPanelPage(quizInfo)).ServeHTTP(w, r)
+		}
+
+	}
+}
+
+func answerCurrentQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		email, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		questionID := r.URL.Query().Get("id")
+		answerText := r.FormValue("answertext")
+		currentQuiz := accessModule.QuestionService.GetQuiz()
+		accessModule.QuestionService.HandleAnswer(currentQuiz.Id, email, questionID, answerText)
+
+		err := accessModule.QuestionService.SaveAnswer(questionID, answerText, email)
+		if err != nil {
+			http.Error(w, "error saving answer", http.StatusInternalServerError)
+			return
+		}
+
+		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
+		print("active" + currentQuiz.Header)
+		print("len " + fmt.Sprint(len(questions)))
+		if len(questions) > 0 {
+			var currentQuestion = questions[0]
+			accessModule.QuestionService.StartAnswering(currentQuiz.Id, email, currentQuestion.ID)
+			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
+		} else {
+			var quizInfo = accessModule.QuestionService.QuizInfoRepository.GetQuizByIdAndEmail(currentQuiz.Id, email)
+			templ.Handler(views.QuizFinishedPanelPage(quizInfo)).ServeHTTP(w, r)
+		}
+	}
+}
+
 func editQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, ok := checkLoggedIn(session, w, r)
@@ -107,36 +162,6 @@ func saveQuestionHandler(session *sessions.Session, accessModule *access.Corneli
 	}
 }
 
-func answerCurrentQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		email, ok := checkLoggedIn(session, w, r)
-		if !ok {
-			return
-		}
-
-		questionID := r.URL.Query().Get("id")
-		answerText := r.FormValue("answertext")
-
-		err := accessModule.QuestionService.SaveAnswer(questionID, answerText, email)
-		if err != nil {
-			http.Error(w, "error saving answer", http.StatusInternalServerError)
-			return
-		}
-
-		// set local date time
-		currentQuiz := accessModule.QuestionService.GetQuiz()
-		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
-		print("active" + currentQuiz.Header)
-		print("len " + fmt.Sprint(len(questions)))
-		if len(questions) > 0 {
-			var currentQuestion = questions[0]
-			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
-		} else {
-			templ.Handler(views.QuizFinishedPanelPage(email)).ServeHTTP(w, r)
-		}
-	}
-}
-
 func answerQuestionHandler(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, ok := checkLoggedIn(session, w, r)
@@ -154,27 +179,6 @@ func answerQuestionHandler(session *sessions.Session, accessModule *access.Corne
 		}
 
 		indexPage(session, accessModule)(w, r)
-	}
-}
-
-func currentQuizPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		email, ok := checkLoggedIn(session, w, r)
-		if !ok {
-			return
-		}
-		currentQuiz := accessModule.QuestionService.GetQuiz()
-		questions := accessModule.QuestionService.AllForAuthorInOpenStatus(email)
-		print("active" + currentQuiz.Header)
-
-		print("len " + fmt.Sprint(len(questions)))
-		if len(questions) > 0 {
-			var currentQuestion = questions[0]
-			templ.Handler(views.CurrentQuizPanelPage(email, currentQuestion)).ServeHTTP(w, r)
-		} else {
-			templ.Handler(views.QuizFinishedPanelPage(email)).ServeHTTP(w, r)
-		}
-
 	}
 }
 
