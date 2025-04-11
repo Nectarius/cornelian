@@ -65,3 +65,9 @@ type QuizInfo struct {
 	Completed time.Time
 	Answers   []AnswerInfo
 }
+
+type ParticipantView struct {
+	PersonId  primitive.ObjectID
+	Questions []Question
+	Answers   []AnswerInfo
+}
