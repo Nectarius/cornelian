@@ -35,8 +35,6 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/auth", authStartHandler())
 	r.Get("/auth/{provider}/callback", authCallbackHandler(session, accessModule))
 	r.Get("/logout", logoutHandler(session))
-	r.Get("/quizzes-panel", quizzesPanelPage(session, accessModule))
-	r.Get("/edit-quiz", editQuizPage(session, accessModule))
 
 	// API handlers
 	r.Get("/countall", countAllHandler(accessModule))
@@ -54,6 +52,10 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 
 	r.Post("/answercurrentquestion", answerCurrentQuestionHandler(session, accessModule))
+
+	r.Get("/quizzes-panel", quizzesPanelPage(session, accessModule))
+	r.Get("/edit-quiz", editQuizPage(session, accessModule))
+	r.Get("/participants-panel", participantsPanelPage(session, accessModule))
 
 	//httpsListenAndServeWithLetsEncrypt(r)
 	//httpsListenAndServe(r)

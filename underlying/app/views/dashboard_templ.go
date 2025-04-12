@@ -59,7 +59,13 @@ func Dashboard(person app.Person, questions []app.Question) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if person.Admin {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/quizzes-panel\" hx-trigger=\"click\" hx-target=\"body\">Квизы</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/quizzes-panel\" hx-trigger=\"click\" hx-target=\"body\">Квизы</button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if person.Admin {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/participants-panel\" hx-trigger=\"click\" hx-target=\"body\">Участники</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

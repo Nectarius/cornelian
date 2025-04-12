@@ -67,7 +67,16 @@ type QuizInfo struct {
 }
 
 type ParticipantView struct {
-	PersonId  primitive.ObjectID
+	Person    Person
 	Questions []Question
 	Answers   []AnswerInfo
+}
+
+func FindQuestionTextById(Questions []Question, id string) string {
+	for i, q := range Questions {
+		if q.ID == id {
+			return Questions[i].Text
+		}
+	}
+	return ""
 }

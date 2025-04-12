@@ -194,6 +194,18 @@ func quizzesPanelPage(session *sessions.Session, accessModule *access.CornelianM
 	}
 }
 
+func participantsPanelPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		participants := accessModule.QuestionService.GetParticipants()
+		templ.Handler(views.ParticipantsPanelPage(participants)).ServeHTTP(w, r)
+	}
+}
+
 func answerQuestionPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, ok := checkLoggedIn(session, w, r)

@@ -18,6 +18,25 @@ func NewPersonRepository(Conf conf.MongoConf) *PersonRepository {
 	return &PersonRepository{Conf: Conf}
 }
 
+func (r *PersonRepository) GetAll() []app.Person {
+
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("person")
+
+	cursor, err := collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	//var person = app.Person{}
+	//var err = result.Decode(&person)
+	var results []app.Person
+	if err := cursor.All(context.TODO(), &results); err != nil {
+		log.Fatal(err)
+	}
+
+	return results
+}
+
 func (r *PersonRepository) GetPersonByEmail(email string) app.Person {
 
 	var client = r.Conf.MongoClient

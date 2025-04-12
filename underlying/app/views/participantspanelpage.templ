@@ -1,0 +1,60 @@
+package views
+
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"strconv"
+)
+
+templ ParticipantsPanelPage(participants []app.ParticipantView) {
+	<div class="container my-4">
+		<h1 class="mb-4">Участники</h1> <!-- Changed <strong> to <h1> for better semantics -->
+		<div id="participants-list">
+			<!-- Check if there are participants -->
+			if len(participants) > 0 {
+				for _, p := range participants {
+					<div class="card quiz-card mb-3">
+						<div class="card-header">
+							<strong>Email:</strong> { p.Person.Email } <!-- Added label for clarity -->
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col">
+									<div class="row align-items-center">
+										if len(p.Answers) > 0 {
+											for _, answer := range p.Answers {
+												<div class="row answer-item">
+													<div class="col-11 ">Вопрос : { app.FindQuestionTextById(p.Questions, answer.QuestionId) }</div>
+													<div class="col-11 ">Ответ : { answer.Text }</div>
+													<div class="col-11 ">Время : { strconv.FormatFloat(answer.Completed.Sub(answer.Started).Seconds(), 'f', 3, 64) }</div>
+												</div>
+												<div class="row separator">
+													<hr/>
+												</div>
+											}
+										}
+									</div>
+									<hr/>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			} else {
+				<!-- Display a message if no participants are available -->
+				<div class="alert alert-warning" role="alert">
+					Нет участников для отображения.
+				</div>
+			}
+		</div>
+		<div class="d-flex justify-content-end mt-4">
+			<button
+				class="btn btn-outline-primary"
+				hx-get="/"
+				hx-trigger="click"
+				hx-target="body"
+			>
+				Главная страничка
+			</button>
+		</div>
+	</div>
+}

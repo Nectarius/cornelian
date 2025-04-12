@@ -15,9 +15,28 @@ import (
 // QuestionService provides methods to manage questions and quizzes.
 type QuestionService struct {
 	CacheConf          conf.CacheConf
+	PersonRepository   repository.PersonRepository
 	QuestionRepository repository.QuestionRepository
 	QuizRepository     repository.QuizRepository
 	QuizInfoRepository repository.QuizInfoRepository
+}
+
+func (r *QuestionService) GetParticipants() []app.ParticipantView {
+	var persons = r.PersonRepository.GetAll()
+	participants := make([]app.ParticipantView, 0, len(persons))
+	currentQuiz := r.GetQuiz()
+	questions := currentQuiz.Questions
+	for _, person := range persons {
+		// should be optimized in a future version
+		var quizInfo = r.QuizInfoRepository.GetQuizByIdAndEmail(currentQuiz.Id, person.Email)
+		participants = append(participants, app.ParticipantView{
+			Person:    person,
+			Questions: questions,
+			Answers:   quizInfo.Answers,
+		})
+	}
+
+	return participants
 }
 
 func (r *QuestionService) StartAnswering(quizId primitive.ObjectID, email string, questionId string) {
@@ -53,8 +72,8 @@ func (r *QuestionService) HandleNewAnswer(id primitive.ObjectID, email string, q
 }
 
 // NewQuestionService creates a new instance of QuestionService.
-func NewQuestionService(cache *conf.CacheConf, questionRepository *repository.QuestionRepository, quizRepository *repository.QuizRepository, quizInfoRepository *repository.QuizInfoRepository) *QuestionService {
-	return &QuestionService{CacheConf: *cache, QuestionRepository: *questionRepository, QuizRepository: *quizRepository, QuizInfoRepository: *quizInfoRepository}
+func NewQuestionService(cache *conf.CacheConf, personRepository *repository.PersonRepository, questionRepository *repository.QuestionRepository, quizRepository *repository.QuizRepository, quizInfoRepository *repository.QuizInfoRepository) *QuestionService {
+	return &QuestionService{CacheConf: *cache, PersonRepository: *personRepository, QuestionRepository: *questionRepository, QuizRepository: *quizRepository, QuizInfoRepository: *quizInfoRepository}
 }
 
 // InsertQuizAndMakeCurrent inserts a new quiz and makes it the current quiz.

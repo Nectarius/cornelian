@@ -49,6 +49,15 @@ templ Dashboard(person app.Person, questions []app.Question) {
         Квизы
       </button>
       }
+      if person.Admin {
+      <button
+        class="btn btn-primary"
+        hx-get="/participants-panel"
+        hx-trigger="click"
+        hx-target="body">
+        Участники
+      </button>
+      }
 
     </div>
 
