@@ -17,6 +17,24 @@ type QuizInfoRepository struct {
 	Conf conf.MongoConf
 }
 
+func (r QuizInfoRepository) ResetQuizInfo(email string, quizId primitive.ObjectID) error {
+
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-info-data")
+	filter := bson.M{"quizid": quizId, "email": email}
+
+	update := bson.M{
+		"$set": bson.M{
+			"answers": []string{},
+		},
+	}
+
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+
+	return err
+
+}
+
 func NewQuizInfoRepository(Conf conf.MongoConf) *QuizInfoRepository {
 	return &QuizInfoRepository{Conf: Conf}
 }

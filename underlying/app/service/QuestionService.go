@@ -21,6 +21,27 @@ type QuestionService struct {
 	QuizInfoRepository repository.QuizInfoRepository
 }
 
+func (r *QuestionService) ResetCurrentQuiz(personId string) error {
+	currentQuiz := r.GetQuiz()
+	var person = r.PersonRepository.GetPersonById(personId)
+
+	if person.Email == "" {
+		log.Printf("Critical error happened")
+		return fmt.Errorf("person not found")
+	}
+	// Reset quiz answers for the person
+
+	var err = r.QuizRepository.ResetQuizAnswersByEmail(currentQuiz.Id, person.Email)
+
+	// Reset quiz info for the person
+	r.QuizInfoRepository.ResetQuizInfo(person.Email, currentQuiz.Id)
+
+	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
+
+	return err
+
+}
+
 func (r *QuestionService) GetParticipants() []app.ParticipantView {
 	var persons = r.PersonRepository.GetAll()
 	participants := make([]app.ParticipantView, 0, len(persons))
@@ -214,6 +235,18 @@ func (r *QuestionService) GetQuizById(id string) (app.Quiz, error) {
 func (r *QuestionService) AllQuestions() []app.Question {
 	quiz := r.GetQuiz()
 	out := quiz.Questions
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].CreatedAt.After(out[j].CreatedAt)
+	})
+	return out
+}
+
+func (r *QuestionService) CountQuestions() []app.Question {
+	quiz := r.GetQuiz()
+	out := make([]app.Question, 0)
+	for _, q := range quiz.Questions {
+		out = append(out, q)
+	}
 	sort.Slice(out, func(i, j int) bool {
 		return out[i].CreatedAt.After(out[j].CreatedAt)
 	})

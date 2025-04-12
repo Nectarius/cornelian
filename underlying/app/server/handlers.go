@@ -7,7 +7,6 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/golangcollege/sessions"
-	"github.com/nefarius/cornelian/underlying/app"
 	"github.com/nefarius/cornelian/underlying/app/access"
 	"github.com/nefarius/cornelian/underlying/app/views"
 )
@@ -42,6 +41,26 @@ func currentQuizPanelPage(session *sessions.Session, accessModule *access.Cornel
 			templ.Handler(views.QuizFinishedPanelPage(quizInfo)).ServeHTTP(w, r)
 		}
 
+	}
+}
+
+func resetAnswersHandler(session *sessions.Session, accessModule *access.CornelianModule) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		personId := r.URL.Query().Get("id")
+
+		err := accessModule.QuestionService.ResetCurrentQuiz(personId)
+		if err != nil {
+			http.Error(w, "error saving quiz", http.StatusInternalServerError)
+			return
+		}
+
+		participants := accessModule.QuestionService.GetParticipants()
+		templ.Handler(views.ParticipantsPanelPage(participants)).ServeHTTP(w, r)
 	}
 }
 
@@ -320,7 +339,7 @@ func countOwnHandler(session *sessions.Session, accessModule *access.CornelianMo
 
 func countAllHandler(accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		all := len(accessModule.QuestionService.AllInStatus(app.StatusOpen))
+		all := len(accessModule.QuestionService.CountQuestions())
 		_, _ = w.Write([]byte(" (" + strconv.Itoa(all) + ")"))
 	}
 }

@@ -9,11 +9,33 @@ import (
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
 )
 
 type QuizRepository struct {
 	Conf conf.MongoConf
+}
+
+func (r QuizRepository) ResetQuizAnswersByEmail(id primitive.ObjectID, email string) error {
+
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("quiz-data")
+	filter := bson.M{"id": id}
+	update := bson.M{"$pull": bson.M{"questions.$[].answers": bson.M{"answeredby": email}}}
+	opts := options.Update()
+	fmt.Printf("ResetQuizAnswersByEmail: %s", email)
+	fmt.Printf("id: %s", id.Hex())
+	result, err := collection.UpdateMany(context.Background(), filter, update, opts)
+	if err != nil {
+		return fmt.Errorf("failed to update answers: %w", err)
+	}
+
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("no document matched the filter with id: %s", id)
+	}
+
+	return nil
 }
 
 func NewQuizRepository(Conf conf.MongoConf) *QuizRepository {

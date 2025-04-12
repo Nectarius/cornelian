@@ -52,6 +52,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 
 	r.Post("/answercurrentquestion", answerCurrentQuestionHandler(session, accessModule))
+	r.Post("/reset-answers", resetAnswersHandler(session, accessModule))
 
 	r.Get("/quizzes-panel", quizzesPanelPage(session, accessModule))
 	r.Get("/edit-quiz", editQuizPage(session, accessModule))

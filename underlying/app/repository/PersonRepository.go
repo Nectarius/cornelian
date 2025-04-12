@@ -7,11 +7,33 @@ import (
 
 	"github.com/nefarius/cornelian/underlying/app/conf"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/net/context"
 )
 
 type PersonRepository struct {
 	Conf conf.MongoConf
+}
+
+func (r PersonRepository) GetPersonById(personId string) app.Person {
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("person")
+	objectID, err2 := primitive.ObjectIDFromHex(personId)
+	if err2 != nil {
+		log.Printf("error happened: %v", err2)
+		return app.Person{}
+	}
+	var filter = bson.M{"id": objectID}
+	result := collection.FindOne(context.Background(), filter)
+
+	var person = app.Person{}
+	var err = result.Decode(&person)
+	if err != nil {
+		log.Printf("error happened: %v", err)
+		return app.Person{}
+	}
+
+	return person
 }
 
 func NewPersonRepository(Conf conf.MongoConf) *PersonRepository {

@@ -27,14 +27,21 @@ templ ParticipantsPanelPage(participants []app.ParticipantView) {
 													<div class="col-11 ">Ответ : { answer.Text }</div>
 													<div class="col-11 ">Время : { strconv.FormatFloat(answer.Completed.Sub(answer.Started).Seconds(), 'f', 3, 64) }</div>
 												</div>
-												<div class="row separator">
-													<hr/>
-												</div>
 											}
 										}
 									</div>
 									<hr/>
 								</div>
+							</div>
+							<div class="d-flex justify-content-end mt-4">
+								<button
+									class="btn btn-outline-primary"
+									hx-post={ "/reset-answers?id=" + p.Person.Id.Hex() }
+									hx-trigger="click"
+									hx-target="body"
+								>
+									Сбросить ответы участника
+								</button>
 							</div>
 						</div>
 					</div>
