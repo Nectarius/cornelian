@@ -22,6 +22,9 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Use(middleware.Logger)
 	r.Use(session.Enable)
 
+	fs := http.FileServer(http.Dir("./resources"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fs))
+
 	// Page specific handlers
 	r.Get("/", indexPage(session, accessModule))
 	r.Get("/login", templ.Handler(views.Login()).ServeHTTP)
