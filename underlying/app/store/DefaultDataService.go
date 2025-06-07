@@ -22,6 +22,42 @@ func createQuestion(text string) app.Question {
 	}
 }
 
+func GetDefaultQuizData2() app.Quiz {
+
+	var listOfQuestions = make([]app.Question, 0)
+
+	listOfQuestions = append(listOfQuestions, createQuestion("Самый вместительный стадион Англии Уэмбли 'Олд Траффорд' 'Энфилд' 'Тоттенхэм Хотспур Стэдиум'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("У кого из этих клубов наибольшее количество чемпионских сезонов подряд 'Манчестер Сити' 'Манчестер Юнайтед' 'Арсенал' 'Ливерпуль'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Из какого города футбольный клуб Тоттенхем - 'Ливерпуль' 'Лондон' 'Бирмингем' 'Манчестер'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("В каком клубе Англии играл Андрей Аршавин - 'Тоттенхем' 'Манчестер Юнайтед' 'Арсенал' 'Челси'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Лучший бомбардир в истории Арсенала - 'Тьери Анри' 'Робин Ван Перси' 'Руд Ван Нистелрой' 'Джон Рэдфорд'"))
+
+	listOfQuestions = append(listOfQuestions, createQuestion("Лучший бомбардир Премьер-лиги 'Алан Ширер' 'Уэйн Руни' 'Гарри Кейн' 'Энди Коул'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Кто из этих клубов никогда не был чемпионом Англии - 'Лестер Сити' 'Тоттенхем Хотспур' 'Блэкберн Роверс' 'Ливерпуль'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("В каком клубе играл Роман Павлюченко - 'Манчестер Юнайтед' 'Тоттенхем' 'Арсенал' 'Челси'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Какой из перечисленных Российский футболист играл за Эвертон - 'Андрей  Канчельскис' 'Роман Павлюченко' 'Александр Мостовой' 'Роман Зобнин'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Матч каких команд называют северолондонским дерби. 'Челси и Арсенала' 'Тоттенхем Хотспур и Арсенала'  'Тоттенхем Хотспур и Челси' 'Вест Хэм Юнайтед и Тоттенхем Хотспур'"))
+
+	listOfQuestions = append(listOfQuestions, createQuestion("Какой клуб Англии носит прозвище  «молотобойцы» 'Лидс' 'Вест Хэм Юнайтед' 'Эвертон' 'Саутгемптон'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Кто становился наибольшее количество раз чемпионом в период с 2006 по 2011 год 'Манчестер Юнайтед' 'Челси' 'Арсенал' 'Манчестер Сити'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("У какого игрока Манчестер Юнайтед было прозвище Валлийский волшебник. - 'Райан Гиггз' 'Эдвард Шерингем' 'Пол Скоулз' 'Гари Нэвилл'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Кто был капитаном Ливерпуля с 2003 по 2015 год 'Хавьер Маскерано' 'Джейми Каррагер' 'Стивен Джеррард' 'Джордан Хендерсон'"))
+	listOfQuestions = append(listOfQuestions, createQuestion("Кто становился наибольшее количество раз чемпионом в период с 2000/01 по 2006/07 год - Манчестер Юнайтед Челси Арсенал Манчестер Сити"))
+
+	var assignedTo = make([]string, 0)
+	assignedTo = append(assignedTo, "aeneole@gmail.com")
+	return app.Quiz{
+		Id:          primitive.NewObjectID(),
+		Header:      "АПЛ 2000 - 2025",
+		Description: "АПЛ. Футбольные вопроссы",
+		Tag:         conf.CURRENT_TAG,
+		Questions:   listOfQuestions,
+		Active:      true,
+		Current:     true,
+		AssignedTo:  assignedTo,
+	}
+}
+
 func GetDefaultQuizData() app.Quiz {
 
 	var listOfQuestions = make([]app.Question, 0)
