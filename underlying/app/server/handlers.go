@@ -72,7 +72,14 @@ func answerCurrentQuestionHandler(session *sessions.Session, accessModule *acces
 		}
 
 		questionID := r.URL.Query().Get("id")
+
 		answerText := r.FormValue("answertext")
+
+		selected := r.FormValue("answer")
+		if selected != "" {
+			answerText = selected
+		}
+
 		currentQuiz := accessModule.QuestionService.GetQuiz()
 		accessModule.QuestionService.HandleAnswer(currentQuiz.Id, email, questionID, answerText)
 

@@ -71,16 +71,29 @@ func (r *QuestionService) StartAnswering(quizId primitive.ObjectID, email string
 }
 
 func (r *QuestionService) HandleAnswer(id primitive.ObjectID, email string, questionID string, answerText string) {
-	var quizInfo = r.QuizInfoRepository.GetQuizByIdAndEmail(id, email)
+	quizInfo := r.QuizInfoRepository.GetQuizByIdAndEmail(id, email)
 	if quizInfo.Email == "" {
-		log.Printf("Critical error happened")
+		log.Printf("HandleAnswer: quiz info not found for quizId=%v, email=%s", id.Hex(), email)
 		return
 	}
-	if quizInfo.Answers == nil || len(quizInfo.Answers) == 0 {
-		log.Printf("Answer was not set correctly")
+
+	// Check if the question exists in the quiz info's answers
+	found := false
+	for _, ans := range quizInfo.Answers {
+		if ans.QuestionId == questionID {
+			found = true
+			break
+		}
+	}
+	if !found {
+		log.Printf("HandleAnswer: questionID %s not found in answers for quizId=%v, email=%s", questionID, id.Hex(), email)
 		return
 	}
-	r.QuizInfoRepository.UpdateAnswer(id, email, questionID, answerText)
+
+	err := r.QuizInfoRepository.UpdateAnswer(id, email, questionID, answerText)
+	if err != nil {
+		log.Printf("HandleAnswer: failed to update answer for quizId=%v, email=%s, questionID=%s: %v", id.Hex(), email, questionID, err)
+	}
 }
 
 func (r *QuestionService) HandleNewAnswer(id primitive.ObjectID, email string, questionID string, started time.Time) {

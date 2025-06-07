@@ -1,6 +1,7 @@
 package app
 
 import (
+	"math/rand/v2"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,12 +22,19 @@ type Person struct {
 }
 
 type Question struct {
-	ID        string
-	From      string
-	Text      string
-	CreatedAt time.Time
-	Status    Status
-	Answers   []Answer
+	ID            string
+	From          string
+	Text          string
+	CreatedAt     time.Time
+	Status        Status
+	AnswerChoices []AnswerChoice
+	Answers       []Answer
+}
+
+type AnswerChoice struct {
+	ID              string
+	Text            string
+	CorrectResponse bool
 }
 
 type Answer struct {
@@ -70,6 +78,15 @@ type ParticipantView struct {
 	Person    Person
 	Questions []Question
 	Answers   []AnswerInfo
+}
+
+func (r *Question) GetShuffledAnswerChoices() []AnswerChoice {
+	shuffled := make([]AnswerChoice, len(r.AnswerChoices))
+	copy(shuffled, r.AnswerChoices)
+	rand.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+	return shuffled
 }
 
 func FindQuestionTextById(Questions []Question, id string) string {

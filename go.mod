@@ -1,6 +1,6 @@
 module github.com/nefarius/cornelian
 
-go 1.21.2
+go 1.23.10
 
 require (
 	github.com/a-h/templ v0.2.793

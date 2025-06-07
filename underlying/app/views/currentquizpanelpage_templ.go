@@ -70,16 +70,85 @@ func CurrentQuizPanelPage(email string, question app.Question) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div><div class=\"form-group\" onload=\"start()\">Seconds: <span id=\"time\">0</span></div><script defer>\n         var timeElapsed = 0;\n         var timerID = -1;\n         function tick() {\n             timeElapsed++\n             document.getElementById(\"time\").innerHTML = timeElapsed;\n         }\n\n         function start() {\n             if(timerID == -1){\n                 timerID = setInterval(tick, 1000);\n             }\n         }\n         function stop() {\n             clearInterval(timerID);\n             timerID = -1;\n         }\n         function reset() {\n             timeElapsed = 0;\n             document.getElementById(\"time\").innerHTML = timeElapsed;\n         }\n         stop();\n         reset();\n         start();\n     </script><div class=\"form-group\"><label for=\"answerTextarea1\">Ваш ответ</label> <textarea class=\"form-control\" id=\"answerTextarea1\" rows=\"5\" name=\"answertext\"></textarea></div><button type=\"submit\" class=\"btn btn-primary\" onclick=\"stop()\" hx-post=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div><div class=\"form-group\" onload=\"start()\">Seconds: <span id=\"time\">17</span></div><script defer>\n         var timeElapsed = 17;\n         var timerID = -1;\n         function tick() {\n             timeElapsed--\n             document.getElementById(\"time\").innerHTML = timeElapsed;\n         }\n\n         function start() {\n             if(timerID == -1){\n                 timerID = setInterval(tick, 1000);\n             }\n         }\n         function stop() {\n             clearInterval(timerID);\n             timerID = -1;\n         }\n         function reset() {\n             timeElapsed = 17;\n             document.getElementById(\"time\").innerHTML = timeElapsed;\n         }\n         stop();\n         reset();\n         start();\n     </script><div class=\"form-group\"><label for=\"answerTextarea1\">Ваш ответ</label> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/answercurrentquestion?id=" + question.ID)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 54, Col: 119}
+		if len(question.AnswerChoices) > 0 {
+			for _, answerChoice := range question.GetShuffledAnswerChoices() {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"option\"><input type=\"radio\" id=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(answerChoice.ID)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 55, Col: 48}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" name=\"answer\" value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(answerChoice.Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 55, Col: 90}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <label for=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("option" + answerChoice.ID)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 56, Col: 47}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(answerChoice.Text)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 56, Col: 69}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</label></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<textarea class=\"form-control\" id=\"answerTextarea1\" rows=\"5\" name=\"answertext\"></textarea>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><button type=\"submit\" class=\"btn btn-primary\" onclick=\"stop()\" hx-post=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var9 string
+		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs("/answercurrentquestion?id=" + question.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/currentquizpanelpage.templ`, Line: 63, Col: 119}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

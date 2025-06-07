@@ -34,7 +34,7 @@ func (r *QuestionRepository) GetQuiz() app.Quiz {
 	}
 
 	if count == 0 {
-		return store.GetDefaultQuizData()
+		return store.GetDefaultQuizData2()
 	}
 
 	result := collection.FindOne(context.Background(), filter)
