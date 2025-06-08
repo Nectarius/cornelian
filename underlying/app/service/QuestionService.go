@@ -131,6 +131,14 @@ func (r *QuestionService) InsertQuizAndMakeCurrent(quizHeader string, quizText s
 }
 
 func (r *QuestionService) InsertQuizWithQuestionsAndMakeCurrent(quizHeader string, quizText string, email string, questions []app.Question) error {
+
+	var available = r.PersonRepository.GetAll()
+
+	var participantList = make([]string, 0, len(available)) // Pre-allocate capacity for efficiency
+	for _, p := range available {
+		participantList = append(participantList, p.Email)
+	}
+
 	quiz := app.Quiz{
 		Id:          primitive.NewObjectID(),
 		Header:      quizHeader,
@@ -139,7 +147,7 @@ func (r *QuestionService) InsertQuizWithQuestionsAndMakeCurrent(quizHeader strin
 		Current:     true,
 		Tag:         conf.CURRENT_TAG,
 		Questions:   questions,
-		AssignedTo:  []string{},
+		AssignedTo:  participantList,
 	}
 
 	if err := r.QuizRepository.InsertQuizAndMakeCurrent(quiz); err != nil {
