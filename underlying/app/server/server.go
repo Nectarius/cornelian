@@ -32,6 +32,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/add-question", addQuestionPage(session, accessModule))
 	r.Get("/edit-question", editQuestionPage(session, accessModule))
 	r.Get("/add-quiz", addQuizPage(session, accessModule))
+	r.Get("/settings", settingsPage(session, accessModule))
 	r.Get("/current-quiz", currentQuizPanelPage(session, accessModule))
 
 	// Login handlers
@@ -51,6 +52,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 
 	r.Post("/update-question", editQuestionHandler(session, accessModule))
 	r.Post("/update-quiz", editQuizHandler(session, accessModule))
+	r.Post("/update-settings", updateSettingsHandler(session, accessModule))
 
 	r.Post("/answerquestion", answerQuestionHandler(session, accessModule))
 

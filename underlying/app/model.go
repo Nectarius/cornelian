@@ -53,6 +53,19 @@ type AnswerInfo struct {
 	Completed  time.Time
 }
 
+type QuizSettings struct {
+	Id            primitive.ObjectID
+	Current       bool
+	Applied       time.Time
+	Email         string
+	QuestionCount int
+}
+
+type QuizCreationData struct {
+	Email           string
+	QuestionIndices []int
+}
+
 type Quiz struct {
 	Id          primitive.ObjectID
 	Header      string

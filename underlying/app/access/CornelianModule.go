@@ -11,6 +11,7 @@ import (
 // CornelianModule holds the repositories, services, and configurations for the application.
 type CornelianModule struct {
 	PersonRepository   *repository.PersonRepository
+	SettingsRepository *repository.SettingsRepository
 	QuestionRepository *repository.QuestionRepository
 	QuestionService    *service.QuestionService
 	MongoConf          *conf.MongoConf
@@ -32,6 +33,7 @@ func NewCornelianModule() *CornelianModule {
 	questionRepository := &repository.QuestionRepository{Conf: *mongoConf}
 
 	personRepository := &repository.PersonRepository{Conf: *mongoConf}
+	settingsRepository := &repository.SettingsRepository{Conf: *mongoConf}
 	quizRepository := &repository.QuizRepository{Conf: *mongoConf}
 	quizInfoRepository := &repository.QuizInfoRepository{Conf: *mongoConf}
 	questionService := service.NewQuestionService(cacheConf, personRepository, questionRepository, quizRepository, quizInfoRepository)
@@ -40,6 +42,7 @@ func NewCornelianModule() *CornelianModule {
 	//quizRepository.InsertQuizAndMakeCurrent(defaultData)
 
 	return &CornelianModule{
+		SettingsRepository: settingsRepository,
 		PersonRepository:   personRepository,
 		QuestionRepository: questionRepository,
 		QuestionService:    questionService,

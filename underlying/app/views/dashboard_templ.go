@@ -38,7 +38,7 @@ func Dashboard(person app.Person, questions []app.Question) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(person.Email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/dashboard.templ`, Line: 8, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/dashboard.templ`, Line: 8, Col: 48}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -65,7 +65,13 @@ func Dashboard(person app.Person, questions []app.Question) templ.Component {
 			}
 		}
 		if person.Admin {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/participants-panel\" hx-trigger=\"click\" hx-target=\"body\">Участники</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/participants-panel\" hx-trigger=\"click\" hx-target=\"body\">Участники</button> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if person.Admin {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn btn-primary\" hx-get=\"/settings\" hx-trigger=\"click\" hx-target=\"body\">Настройки</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

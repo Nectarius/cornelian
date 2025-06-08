@@ -1,0 +1,42 @@
+package views
+
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"strconv"
+	"time"
+)
+
+templ SettingsPage(data app.QuizSettings) {
+	<div class="container">
+		<strong>Кем установлены</strong>: { data.Email }
+		<div class="jumbotron">
+			<h5 class="card-title">Настройки</h5>
+			<div class="container">
+				<div class="row">
+					<div class="col-1">Обновлены</div>
+					<div class="col-11">{ data.Applied.Format(time.UnixDate) }</div>
+				</div>
+				<div class="row">
+					<div class="col-12"><hr/></div>
+				</div>
+			</div>
+			<form>
+				<div class="form-group">
+					<label for="quizHeader">Количество вопросов</label>
+					<input type="number" class="form-control" id="questioncount" name="questioncount" value={ strconv.Itoa(data.QuestionCount) }/>
+				</div>
+				<hr/>
+				<button type="submit" class="btn btn-primary" hx-post={ "/update-settings" } hx-target="body">Обновить настройки</button>
+				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
+				<button
+					class="btn btn-outline-primary"
+					hx-get="/"
+					hx-trigger="click"
+					hx-target="body"
+				>
+					Главная страничка
+				</button>
+			</form>
+		</div>
+	</div>
+}

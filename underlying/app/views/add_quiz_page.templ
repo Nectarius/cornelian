@@ -1,30 +1,63 @@
 package views
 
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"strconv"
+)
 
-templ AddQuizPage(email string) {
+templ AddQuizPage(data app.QuizCreationData) {
 	<div class="container">
-		<strong>Email</strong>: { email }
+		<strong>Email</strong>: { data.Email }
 		<div class="jumbotron">
 			<h5 class="card-title">Добавление нового Квиза</h5>
 			<div class="container">
 				<div class="row">
 					<div class="col-1">От</div>
-					<div class="col-11">{ email }</div>
+					<div class="col-11">{ data.Email }</div>
 				</div>
 				<div class="row">
 					<div class="col-12"><hr/></div>
 				</div>
 			</div>
 			<form>
-			<div class="form-group">
-				<label for="quizHeader">Заголовок</label>
-				<textarea class="form-control" id="quizHeaderarea1" rows="5" name="quizheader">Какой - то заголовок</textarea>
-
-				<label for="quizTextarea1">Описание</label>
-				<textarea class="form-control" id="quizTextarea1" rows="5" name="quizdescription">Некое подобие описания ...</textarea>
-
-			</div>
-				<button type="submit" class="btn btn-primary" hx-post={ "/add-new-quiz"} hx-target="body">Добавить</button>
+				<div class="form-group">
+					<label for="quizHeader">Заголовок</label>
+					<textarea class="form-control" id="quizHeaderarea1" rows="5" name="quizheader">Какой - то заголовок</textarea>
+					<label for="quizTextarea1">Описание</label>
+					<textarea class="form-control" id="quizTextarea1" rows="5" name="quizdescription">Некое подобие описания ...</textarea>
+				</div>
+				<hr/>
+				<h3>Вопросы с ответами</h3>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Question</th>
+							<th>Answers</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, index := range data.QuestionIndices {
+							<tr>
+								<td>
+									<input type="text" class="form-control" name={ "question_" + strconv.Itoa(index) } placeholder="Введите вопрос"/>
+								</td>
+								<td>
+									<input type="text" class="form-control" name={ "answer1_" + strconv.Itoa(index) } placeholder="Верный ответ"/>
+								</td>
+								<td>
+									<input type="text" class="form-control" name={ "answer2_" + strconv.Itoa(index) } placeholder="Ответ"/>
+								</td>
+								<td>
+									<input type="text" class="form-control" name={ "answer3_" + strconv.Itoa(index) } placeholder="Ответ"/>
+								</td>
+								<td>
+									<input type="text" class="form-control" name={ "answer4_" + strconv.Itoa(index) } placeholder="Ответ"/>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<button type="submit" class="btn btn-primary" hx-post={ "/add-new-quiz" } hx-target="body">Добавить</button>
 				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
 			</form>
 		</div>

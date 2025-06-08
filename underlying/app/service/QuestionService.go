@@ -130,6 +130,25 @@ func (r *QuestionService) InsertQuizAndMakeCurrent(quizHeader string, quizText s
 	return nil
 }
 
+func (r *QuestionService) InsertQuizWithQuestionsAndMakeCurrent(quizHeader string, quizText string, email string, questions []app.Question) error {
+	quiz := app.Quiz{
+		Id:          primitive.NewObjectID(),
+		Header:      quizHeader,
+		Description: quizText,
+		Active:      true,
+		Current:     true,
+		Tag:         conf.CURRENT_TAG,
+		Questions:   questions,
+		AssignedTo:  []string{},
+	}
+
+	if err := r.QuizRepository.InsertQuizAndMakeCurrent(quiz); err != nil {
+		log.Printf("Failed to insert quiz: %v", err)
+		return err
+	}
+	return nil
+}
+
 // AssignQuizIfApplicable assigns the current quiz to the given email if applicable.
 func (r *QuestionService) AssignQuizIfApplicable(email string) error {
 	r.CacheConf.Cache.Del(conf.CURRENT_TAG)
