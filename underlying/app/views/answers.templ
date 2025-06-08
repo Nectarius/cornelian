@@ -1,6 +1,9 @@
 package views
 
-import "github.com/nefarius/cornelian/underlying/app"
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"time"
+)
 
 templ Answers(answers []app.Answer) {
 	if len(answers) > 0 {
@@ -14,7 +17,7 @@ templ Answers(answers []app.Answer) {
 						</div>
 						<div class="row">
 							<div class="col-2">Время</div>
-							<div class="col-10">{ answer.AnsweredAt.Format( "2006-01-02 15:04:05") }</div>
+							<div class="col-10">{ answer.AnsweredAt.Format(time.UnixDate) }</div>
 						</div>
 						<div class="row">
 							<div class="col-2">Ответ</div>
