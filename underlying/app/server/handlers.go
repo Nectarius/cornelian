@@ -142,11 +142,22 @@ func updateSettingsHandler(session *sessions.Session, accessModule *access.Corne
 			return
 		}
 
+		var allQuizez = accessModule.QuestionService.GetQuizzes()
+
+		var quizeChoiceHeader = r.FormValue("quizChoice")
+
+		var quizeChoice, found = findQuizeByHeader(allQuizez, quizeChoiceHeader)
+		if found != true {
+			http.Error(w, "error selecting quiz", http.StatusInternalServerError)
+			return
+		}
+
 		var quizSettings = app.QuizSettings{
 			QuestionCount: questionCount,
 			Id:            primitive.NewObjectID(),
 			Applied:       time.Now(),
 			Current:       true,
+			QuizChoice:    quizeChoice.Id,
 			Email:         email,
 		}
 
@@ -159,8 +170,38 @@ func updateSettingsHandler(session *sessions.Session, accessModule *access.Corne
 		var settings = accessModule.SettingsRepository.GetAll()
 		var currentSettings = filterSettingsByCurrentAndGetFirst(settings)
 
-		templ.Handler(views.SettingsPage(currentSettings)).ServeHTTP(w, r)
+		quizList := make([]app.QuizDto, 0, len(allQuizez)) // Pre-allocate capacity for efficiency
+		for _, p := range allQuizez {
+			quizList = append(quizList, app.QuizDto{
+				Id:          p.Id.Hex(),
+				Header:      p.Header,
+				Description: p.Description,
+			})
+		}
+
+		var settingsDto = app.QuizSettingsDto{
+			QuestionCount: currentSettings.QuestionCount,
+			Applied:       currentSettings.Applied,
+			Email:         currentSettings.Email,
+			Quizzes:       quizList,
+			QuizChoice: app.QuizDto{
+				Id:          quizeChoice.Id.Hex(),
+				Header:      quizeChoice.Header,
+				Description: quizeChoice.Description,
+			},
+		}
+		accessModule.CacheConf.Cache.Del(conf.CURRENT_TAG)
+		templ.Handler(views.SettingsPage(settingsDto)).ServeHTTP(w, r)
 	}
+}
+
+func findQuizeByHeader(quizzez []app.Quiz, header string) (app.Quiz, bool) {
+	for _, quiz := range quizzez {
+		if quiz.Header == header { // Case-sensitive comparison
+			return quiz, true // Return the user and true if found
+		}
+	}
+	return app.Quiz{}, false // Return zero-value User and false if not found
 }
 
 func filterSettingsByCurrentAndGetFirst(settings []app.QuizSettings) app.QuizSettings {
@@ -398,7 +439,31 @@ func settingsPage(session *sessions.Session, accessModule *access.CornelianModul
 		var settings = accessModule.SettingsRepository.GetAll()
 		var currentSettings = filterSettingsByCurrentAndGetFirst(settings)
 
-		templ.Handler(views.SettingsPage(currentSettings)).ServeHTTP(w, r)
+		var allQuizez = accessModule.QuestionService.GetQuizzes()
+
+		var quizChoice = app.QuizDto{}
+		quizList := make([]app.QuizDto, 0, len(allQuizez))
+		for _, p := range allQuizez {
+			var dto = app.QuizDto{
+				Id:          p.Id.Hex(),
+				Header:      p.Header,
+				Description: p.Description,
+			}
+			if p.Id == currentSettings.QuizChoice {
+				quizChoice = dto
+			}
+			quizList = append(quizList, dto)
+		}
+
+		var settingsDto = app.QuizSettingsDto{
+			QuestionCount: currentSettings.QuestionCount,
+			Applied:       currentSettings.Applied,
+			Email:         currentSettings.Email,
+			Quizzes:       quizList,
+			QuizChoice:    quizChoice,
+		}
+
+		templ.Handler(views.SettingsPage(settingsDto)).ServeHTTP(w, r)
 	}
 }
 

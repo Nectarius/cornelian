@@ -58,6 +58,7 @@ type QuizSettings struct {
 	Current       bool
 	Applied       time.Time
 	Email         string
+	QuizChoice    primitive.ObjectID
 	QuestionCount int
 }
 

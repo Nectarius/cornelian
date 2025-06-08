@@ -37,6 +37,43 @@ func (r *SettingsRepository) GetAll() []app.QuizSettings {
 	return results
 }
 
+func (r *SettingsRepository) GetCurrent() app.QuizSettings {
+
+	var client = r.Conf.MongoClient
+	collection := client.Database("taffeite").Collection("settings")
+	var result app.QuizSettings
+	var filter = bson.M{"current": true}
+
+	// Define your filter (e.g., find all users)
+
+	// Add options, such as sorting to define what "first" means
+	//findOptions := options.Find().SetSort(filter).SetLimit(1) // Sort by creation time, ascending, and limit to 1
+
+	cursor, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Fatalf("Failed to find users: %v", err)
+	}
+	defer cursor.Close(context.Background()) // Always close the cursor!
+
+	if cursor.Next(context.Background()) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			log.Fatalf("Failed to decode user: %v", err)
+		}
+		fmt.Printf("Found first user via cursor: %+v\n", result)
+	} else {
+		// This means cursor.Next(ctx) returned false, indicating no documents or end of results
+		fmt.Println("No user found via cursor.")
+	}
+
+	// Check for any errors that occurred during cursor iteration
+	if err := cursor.Err(); err != nil {
+		log.Fatalf("Cursor error: %v", err)
+	}
+
+	return result
+}
+
 func (r *SettingsRepository) InsertSettings(settings app.QuizSettings) error {
 	var client = r.Conf.MongoClient
 	collection := client.Database("taffeite").Collection("settings")

@@ -19,6 +19,7 @@ type QuestionService struct {
 	QuestionRepository repository.QuestionRepository
 	QuizRepository     repository.QuizRepository
 	QuizInfoRepository repository.QuizInfoRepository
+	SettingsRepository repository.SettingsRepository
 }
 
 func (r *QuestionService) ResetCurrentQuiz(personId string) error {
@@ -106,8 +107,8 @@ func (r *QuestionService) HandleNewAnswer(id primitive.ObjectID, email string, q
 }
 
 // NewQuestionService creates a new instance of QuestionService.
-func NewQuestionService(cache *conf.CacheConf, personRepository *repository.PersonRepository, questionRepository *repository.QuestionRepository, quizRepository *repository.QuizRepository, quizInfoRepository *repository.QuizInfoRepository) *QuestionService {
-	return &QuestionService{CacheConf: *cache, PersonRepository: *personRepository, QuestionRepository: *questionRepository, QuizRepository: *quizRepository, QuizInfoRepository: *quizInfoRepository}
+func NewQuestionService(cache *conf.CacheConf, personRepository *repository.PersonRepository, questionRepository *repository.QuestionRepository, quizRepository *repository.QuizRepository, quizInfoRepository *repository.QuizInfoRepository, settingsRepository *repository.SettingsRepository) *QuestionService {
+	return &QuestionService{CacheConf: *cache, PersonRepository: *personRepository, QuestionRepository: *questionRepository, QuizRepository: *quizRepository, QuizInfoRepository: *quizInfoRepository, SettingsRepository: *settingsRepository}
 }
 
 // InsertQuizAndMakeCurrent inserts a new quiz and makes it the current quiz.
@@ -188,8 +189,21 @@ func (r *QuestionService) GetQuiz() app.Quiz {
 		return cachedData.(app.Quiz)
 	}
 
-	quiz := r.QuestionRepository.GetQuiz()
-	r.CacheConf.Cache.Set(key, quiz, 0)
+	var currentSettings = r.SettingsRepository.GetCurrent()
+	quiz := r.QuizRepository.GetQuizById(currentSettings.QuizChoice)
+
+	// Put question into cache
+	// e.g., "q1"
+	value := quiz
+	cost := int64(1) // Cost can be 1 for simplicity or based on size (e.g., len(question.Text))
+
+	// Set with no TTL (stays until evicted)
+	if r.CacheConf.Cache.Set(conf.CURRENT_TAG, value, cost) {
+		fmt.Printf("Successfully cached question %s\n", key)
+	} else {
+		fmt.Printf("Failed to cache question %s\n", key)
+	}
+
 	return quiz
 }
 

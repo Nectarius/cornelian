@@ -8,11 +8,13 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/nefarius/cornelian/underlying/app"
-import "strings"
-
-import "golang.org/x/text/cases"
-import "golang.org/x/text/language"
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"strings"
+	"time"
+)
 
 func cap(in string) string {
 	in = strings.Split(in, "@")[0]
@@ -58,7 +60,7 @@ func Card(question app.Question) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(question.From)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 26, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 28, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -69,9 +71,9 @@ func Card(question app.Question) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(question.CreatedAt.Format("yyyy-MM-dd HH:mm:ss"))
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(question.CreatedAt.Format(time.UnixDate))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 30, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 32, Col: 70}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -84,7 +86,7 @@ func Card(question app.Question) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(question.Text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 35, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 37, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -97,7 +99,7 @@ func Card(question app.Question) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs("/answer?id=" + question.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 42, Col: 48}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 44, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -110,7 +112,7 @@ func Card(question app.Question) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/edit-question?id=" + question.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 50, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `underlying/app/views/card.templ`, Line: 52, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

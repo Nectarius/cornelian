@@ -36,7 +36,7 @@ func NewCornelianModule() *CornelianModule {
 	settingsRepository := &repository.SettingsRepository{Conf: *mongoConf}
 	quizRepository := &repository.QuizRepository{Conf: *mongoConf}
 	quizInfoRepository := &repository.QuizInfoRepository{Conf: *mongoConf}
-	questionService := service.NewQuestionService(cacheConf, personRepository, questionRepository, quizRepository, quizInfoRepository)
+	questionService := service.NewQuestionService(cacheConf, personRepository, questionRepository, quizRepository, quizInfoRepository, settingsRepository)
 
 	//var defaultData = store.GetDefaultQuizData2()
 	//quizRepository.InsertQuizAndMakeCurrent(defaultData)

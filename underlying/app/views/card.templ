@@ -1,10 +1,12 @@
 package views
 
-import "github.com/nefarius/cornelian/underlying/app"
-import "strings"
-
-import "golang.org/x/text/cases"
-import "golang.org/x/text/language"
+import (
+	"github.com/nefarius/cornelian/underlying/app"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"strings"
+	"time"
+)
 
 func cap(in string) string {
 	in = strings.Split(in, "@")[0]
@@ -14,49 +16,49 @@ func cap(in string) string {
 
 templ Card(question app.Question) {
 	<div class="card question-card">
-  <div class="card-header">
-   if question.Status == app.StatusAnswered && len(question.Answers) > 0 {
-    <span class="badge bg-success text-white status ''">Отвечено</span>
-   }
-  </div>
-  <div class="card-body">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-2">От:</div>
-        <div class="col-sm-10">{ question.From }</div>
-      </div>
-      <div class="row">
-        <div class="col-sm-2">Время создания:</div>
-        <div class="col-sm-10">{ question.CreatedAt.Format("yyyy-MM-dd HH:mm:ss") }</div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="col-12">
-          <pre>{ question.Text }</pre>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-auto ms-auto">
-          <button
-            class="btn btn-success"
-            hx-get={ "/answer?id=" + question.ID }
-            hx-trigger="click"
-            hx-target="body"
-          >
-            Ответить
-          </button>
-          <button
-            class="btn btn-success"
-            hx-get={ "/edit-question?id=" + question.ID }
-            hx-trigger="click"
-            hx-target="body"
-          >
-            Редактировать
-          </button>
-        </div>
-      </div>
-      @Answers(question.Answers)
-    </div>
-  </div>
-</div>
+		<div class="card-header">
+			if question.Status == app.StatusAnswered && len(question.Answers) > 0 {
+				<span class="badge bg-success text-white status ''">Отвечено</span>
+			}
+		</div>
+		<div class="card-body">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-2">От:</div>
+					<div class="col-sm-10">{ question.From }</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-2">Время создания:</div>
+					<div class="col-sm-10">{ question.CreatedAt.Format(time.UnixDate) }</div>
+				</div>
+				<hr/>
+				<div class="row">
+					<div class="col-12">
+						<pre>{ question.Text }</pre>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-auto ms-auto">
+						<button
+							class="btn btn-success"
+							hx-get={ "/answer?id=" + question.ID }
+							hx-trigger="click"
+							hx-target="body"
+						>
+							Ответить
+						</button>
+						<button
+							class="btn btn-success"
+							hx-get={ "/edit-question?id=" + question.ID }
+							hx-trigger="click"
+							hx-target="body"
+						>
+							Редактировать
+						</button>
+					</div>
+				</div>
+				@Answers(question.Answers)
+			</div>
+		</div>
+	</div>
 }

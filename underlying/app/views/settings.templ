@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-templ SettingsPage(data app.QuizSettings) {
+templ SettingsPage(data app.QuizSettingsDto) {
 	<div class="container">
 		<strong>Кем установлены</strong>: { data.Email }
 		<div class="jumbotron">
@@ -25,6 +25,13 @@ templ SettingsPage(data app.QuizSettings) {
 					<label for="quizHeader">Количество вопросов</label>
 					<input type="number" class="form-control" id="questioncount" name="questioncount" value={ strconv.Itoa(data.QuestionCount) }/>
 				</div>
+				<label for="quizChoice">Выберите текущий квиз</label>
+				<input type="text" id="quizChoice" name="quizChoice" list="quizzes" placeholder={ data.QuizChoice.Header }/>
+				<datalist id="quizzes">
+					for _, quiz := range data.Quizzes {
+						<option value={ quiz.Header }>{ quiz.Description }</option>
+					}
+				</datalist>
 				<hr/>
 				<button type="submit" class="btn btn-primary" hx-post={ "/update-settings" } hx-target="body">Обновить настройки</button>
 				<button type="submit" class="btn btn-danger" hx-get="/" hx-target="body" hx-confirm="Вы уверены, что хотите отменить?">Отмена</button>
