@@ -89,9 +89,16 @@ type QuizInfo struct {
 }
 
 type ParticipantView struct {
-	Person    Person
-	Questions []Question
-	Answers   []AnswerInfo
+	Person      Person
+	Questions   []Question
+	Answers     []AnswerInfo
+	SummaryView SummaryView
+}
+
+type SummaryView struct {
+	CorrectResponses  int
+	DeclinedDuetoTime int
+	QuizDuration      float64
 }
 
 func (r *Question) GetShuffledAnswerChoices() []AnswerChoice {

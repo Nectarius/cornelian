@@ -1,0 +1,52 @@
+package views
+
+import "github.com/nefarius/cornelian/underlying/app"
+
+templ SummaryPage(summary app.SummaryDto) {
+	<div class="container my-4">
+		<h1 class="mb-4">{ summary.QuizChoice.Header }</h1> <!-- Changed <strong> to <h1> for better semantics -->
+		<div id="summary-list">
+			<!-- Check if there are participants -->
+			if len(summary.Participants) > 0 {
+				for _, p := range summary.Participants {
+					<div class="card quiz-card mb-3">
+						<div class="card-header">
+							<strong>Email:</strong> { p.Person.Email } <!-- Added label for clarity -->
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col">
+									<div class="row align-items-center">
+										if len(p.Answers) > 0 {
+											<div class="row answer-item">
+												<div class="col-11 ">Верных ответов : { p.SummaryView.CorrectResponses }</div>
+												<div class="col-11 ">Просроченных по времени: { p.SummaryView.DeclinedDuetoTime } </div>
+												<div class="col-11 ">Общее Время : { p.SummaryView.QuizDuration }</div>
+											</div>
+										}
+									</div>
+									<hr/>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			} else {
+				<!-- Display a message if no participants are available -->
+				<div class="alert alert-warning" role="alert">
+					Пока нет участников
+				</div>
+			}
+		</div>
+		<div class="d-flex justify-content-end mt-4">
+			<button
+				class="btn btn-outline-primary"
+				hx-get="/"
+				hx-trigger="click"
+				hx-target="body"
+			>
+				Главная страничка
+			</button>
+		</div>
+	</div>
+}

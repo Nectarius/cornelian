@@ -10,6 +10,11 @@ type QuizSettingsDto struct {
 	QuizChoice    QuizDto
 }
 
+type SummaryDto struct {
+	Participants []ParticipantView
+	QuizChoice   QuizDto
+}
+
 type QuizDto struct {
 	Id          string
 	Header      string

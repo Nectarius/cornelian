@@ -67,6 +67,14 @@ templ Dashboard(person app.Person, questions []app.Question) {
 						Настройки
 					</button>
 				}
+				<button
+					class="btn btn-secondary"
+					hx-get="/summary"
+					hx-trigger="click"
+					hx-target="body"
+				>
+					Саммэри
+				</button>
 			</div>
 			@Questions(questions)
 		</div>

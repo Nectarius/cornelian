@@ -71,12 +71,12 @@ func Dashboard(person app.Person, questions []app.Question) templ.Component {
 			}
 		}
 		if person.Admin {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button class=\"btn btn-primary\" hx-get=\"/settings\" hx-trigger=\"click\" hx-target=\"body\">Настройки</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<button class=\"btn btn-primary\" hx-get=\"/settings\" hx-trigger=\"click\" hx-target=\"body\">Настройки</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<button class=\"btn btn-secondary\" hx-get=\"/summary\" hx-trigger=\"click\" hx-target=\"body\">Саммэри</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

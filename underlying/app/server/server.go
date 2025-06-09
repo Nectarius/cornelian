@@ -33,6 +33,7 @@ func StartServer(session *sessions.Session, db *store.InMem, accessModule *acces
 	r.Get("/edit-question", editQuestionPage(session, accessModule))
 	r.Get("/add-quiz", addQuizPage(session, accessModule))
 	r.Get("/settings", settingsPage(session, accessModule))
+	r.Get("/summary", summaryPage(session, accessModule))
 	r.Get("/current-quiz", currentQuizPanelPage(session, accessModule))
 
 	// Login handlers

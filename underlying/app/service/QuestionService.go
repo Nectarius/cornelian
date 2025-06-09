@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"math"
 	"sort"
 	"time"
 
@@ -45,16 +46,54 @@ func (r *QuestionService) ResetCurrentQuiz(personId string) error {
 
 func (r *QuestionService) GetParticipants() []app.ParticipantView {
 	var persons = r.PersonRepository.GetAll()
+	var timeLimit int = 17
 	participants := make([]app.ParticipantView, 0, len(persons))
 	currentQuiz := r.GetQuiz()
 	questions := currentQuiz.Questions
 	for _, person := range persons {
-		// should be optimized in a future version
 		var quizInfo = r.QuizInfoRepository.GetQuizByIdAndEmail(currentQuiz.Id, person.Email)
+
+		var correctAnswers int = 0
+		var declinedDuetoTime int = 0
+		var quizDuration float64 = 0.0
+		userAnswersMap := make(map[string]app.AnswerInfo)
+		for _, personAnswer := range quizInfo.Answers {
+			userAnswersMap[personAnswer.QuestionId] = personAnswer
+		}
+
+		correctAnswersByQuestionMap := make(map[string]string)
+		for _, q := range questions {
+			for _, ac := range q.AnswerChoices {
+				if ac.CorrectResponse {
+					correctAnswersByQuestionMap[q.ID] = ac.Text
+					break // Found the correct answer for this question, move to the next question
+				}
+			}
+		}
+
+		for questionID, correctText := range correctAnswersByQuestionMap {
+			if userAnswer, ok := userAnswersMap[questionID]; ok { // Check if user answered this question
+				var duration = userAnswer.Completed.Sub(userAnswer.Started).Seconds()
+				quizDuration += duration
+				if userAnswer.Text == correctText {
+					if int(math.Floor(duration)) <= timeLimit {
+						correctAnswers++
+					} else {
+						declinedDuetoTime++
+					}
+				}
+			}
+		}
+
 		participants = append(participants, app.ParticipantView{
 			Person:    person,
 			Questions: questions,
 			Answers:   quizInfo.Answers,
+			SummaryView: app.SummaryView{
+				CorrectResponses:  correctAnswers,
+				DeclinedDuetoTime: declinedDuetoTime,
+				QuizDuration:      quizDuration,
+			},
 		})
 	}
 

@@ -429,6 +429,42 @@ func addQuizPage(session *sessions.Session, accessModule *access.CornelianModule
 	}
 }
 
+func summaryPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, ok := checkLoggedIn(session, w, r)
+		if !ok {
+			return
+		}
+
+		var settings = accessModule.SettingsRepository.GetAll()
+		var currentSettings = filterSettingsByCurrentAndGetFirst(settings)
+
+		var allQuizez = accessModule.QuestionService.GetQuizzes()
+
+		var quizChoice = app.QuizDto{}
+		quizList := make([]app.QuizDto, 0, len(allQuizez))
+		for _, p := range allQuizez {
+			var dto = app.QuizDto{
+				Id:          p.Id.Hex(),
+				Header:      p.Header,
+				Description: p.Description,
+			}
+			if p.Id == currentSettings.QuizChoice {
+				quizChoice = dto
+			}
+			quizList = append(quizList, dto)
+		}
+		participants := accessModule.QuestionService.GetParticipants()
+
+		var summary = app.SummaryDto{
+			Participants: participants,
+			QuizChoice:   quizChoice,
+		}
+
+		templ.Handler(views.SummaryPage(summary)).ServeHTTP(w, r)
+	}
+}
+
 func settingsPage(session *sessions.Session, accessModule *access.CornelianModule) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, ok := checkLoggedIn(session, w, r)
